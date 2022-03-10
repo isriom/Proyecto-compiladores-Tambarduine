@@ -1,96 +1,97 @@
-Code -> instruction
-instruction -> instruction instruction 
-instruction -> ifelsestatement sc
-instruction -> ifstatement sc
-instruction ->forstatement sc
-instruction -> incasestatement sc
-instruction -> defstatement sc
-instruction -> excecstatement sc
-instruction -> printstatement sc
-instruction -> metronomostatement sc
-instruction -> declarationstatement sc
-instruction -> negationstatement sc
-instruction -> tfstatement sc
-instruction -> ffstatement sc
-instruction -> abanicostatement sc
-instruction -> verticalstatement sc
-instruction -> percutorstatement sc
-instruction -> golpestatement sc
-instruction -> vribatoestatement sc
-instruction -> typeestatement sc
-ifelsestatement -> ifstatement elsestatement
-ifstatement -> IF boolParam Scope
-elsestatement -> ELSE Scope
-forstatement -> FOR NAME TO NUMBER STEP numberParam Scope
-forstatement -> FOR varnum TO NUMBER STEP numberParam Scope
-forstatement -> FOR NAME TO numberParam  Scope
-forstatement -> FOR varnum TO numberParam Scope
-incasestatement -> INCASE whenestatement whenelseestatement ENDINCASE
-incasestatement -> INCASE varbool whenEstatementIncompletebool whenelseestatement ENDINCASE
-incasestatement -> INCASE varnum whenEstatementIncompletenum whenelseestatement ENDINCASE
-defstatement -> DEF NAME Parameters Scope
-defstatement -> DEF PRINCIPAL LP RP Scope
-excecstatement ->EXEC NAME Parameters
-printstatement -> PRINT Parameters
-metronomostatement -> METRONOME LP A COMMA numberParam RP
-metronomostatement -> METRONOME LP D COMMA numberParam RP
-declarationstatement -> varnum
-declarationstatement -> varbool
-negationstatement -> SET NAME DOT NEG
-tfstatement -> SET NAME DOT T
-ffstatement -> SET NAME DOT F
-abanicostatement -> ABANICO LP A RP
-abanicostatement -> ABANICO LP B RP
-verticalstatement -> VERTICAL LP D RP
-verticalstatement -> VERTICAL LP I RP
-percutorstatement -> PERCUTOR LP D RP
-percutorstatement -> PERCUTOR LP I RP
-percutorstatement -> PERCUTOR LP A RP
-percutorstatement -> PERCUTOR LP B RP
-percutorstatement -> PERCUTOR LP DI RP
-percutorstatement -> PERCUTOR LP AB RP
-golpestatement -> GOLPE LP RP
-vribatoestatement -> VRIBATO LP numberParam RP
-typeestatement -> LP NAME RP
-Scope -> LB Pre_Scope instruction RB
-whenestatement -> WHEN varbool condition boolParam THEN Scope
-whenestatement -> WHEN varnum condition numberParam THEN Scope
-whenestatement -> whenestatement whenestatement
-whenelseestatement -> WHENELSE Scope
-whenEstatementIncompletebool -> WHEN condition boolParam THEN Scope
-whenEstatementIncompletebool -> whenEstatementIncompletebool whenEstatementIncompletebool 
-whenEstatementIncompletenum -> WHEN condition numberParam THEN Scope
-whenEstatementIncompletenum  -> whenEstatementIncompletenum whenEstatementIncompletenum 
-Parameters -> ParameterIncomplete RP
-Parameters -> LP RP
-ParameterIncomplete ->  ParameterIncomplete COMMA NUM
-ParameterIncomplete ->  ParameterIncomplete COMMA varnum
-ParameterIncomplete ->  ParameterIncomplete COMMA bool
-ParameterIncomplete ->  ParameterIncomplete COMMA varbool
-ParameterIncomplete ->  ParameterIncomplete COMMA TEXT
-ParameterIncomplete -> LP NUM
-ParameterIncomplete -> LP varnum
-ParameterIncomplete -> LP bool
-ParameterIncomplete -> LP varbool
-ParameterIncomplete -> LP TEXT
-varnum -> SET NAME COMMA NUMBER
-varbool -> SET NAME COMMA bool
-varnum -> SET varnum COMMA NUMBER
-varbool -> SET varbool COMMA bool
-varnum -> NAME
-varbool -> NAME
-numberParam -> NUMBER
-numberParam -> varnum
-boolParam -> bool
-boolParam -> varbool
-bool -> FALSE
-bool -> TRUE
-bool ->  numberParam condition numberParam 
-bool ->  boolParam condition boolParam 
-condition -> LESS
-condition -> GREAT
-condition -> EQUAL
-condition -> LESSEQUAL
-condition -> GREATEEQUAL
-condition -> DIFFERENT
-Pre_Scope ->
+Code -> instruction
+instruction -> instruction instruction 
+instruction -> ifelsestatement sc
+instruction -> ifstatement sc
+instruction ->forstatement sc
+instruction -> incasestatement sc
+instruction -> defstatement sc
+instruction -> excecstatement sc
+instruction -> printstatement sc
+instruction -> metronomostatement sc
+instruction -> declarationstatement sc
+instruction -> negationstatement sc
+instruction -> tfstatement sc
+instruction -> ffstatement sc
+instruction -> abanicostatement sc
+intruction -> verticalstatement sc
+instruction -> percutorstatement sc
+instruction -> golpestatement sc
+instruction -> vribatoestatement sc
+instruction -> typeestatement sc
+ifelsestatement -> ifstatement elsestatement
+ifstatement -> IF boolParam Scope
+elsestatement -> ELSE Scope
+forstatement -> FOR NAME TO NUMBER STEP numberParam Scope
+forstatement -> FOR varnum TO NUMBER STEP numberParam Scope
+forstatement -> FOR NAME TO numberParam  Scope
+forstatement -> FOR varnum TO numberParam Scope
+incasestatement -> INCASE whenestatement whenelseestatement ENDINCASE
+incasestatement -> INCASE varbool whenEstatementIncompletebool whenelseestatement ENDINCASE
+incasestatement -> INCASE varnum whenEstatementIncompletenum whenelseestatement ENDINCASE
+defstatement -> DEF NAME Parameters Scope
+defstatement -> DEF PRINCIPAL LP RP Scope
+excecstatement ->EXEC NAME Parameters
+printstatement -> PRINT Parameters
+metronomostatement -> METRONOME LP A COMMA numberParam RP
+metronomostatement -> METRONOME LP D COMMA numberParam RP
+declarationstatement -> varnum
+declarationstatement -> varbool
+negationstatement -> SET NAME DOT NEG
+tfstatement -> SET NAME DOT T
+ffstatement -> SET NAME DOT F
+abanicostatement -> ABANICO LP A RP
+abanicostatement -> ABANICO LP B RP
+verticalstatement -> VERTICAL LP D RP
+verticalstatement -> VERTICAL LP I RP
+percutorstatement -> PERCUTOR LP D RP
+percutorstatement -> PERCUTOR LP I RP
+percutorstatement -> PERCUTOR LP A RP
+percutorstatement -> PERCUTOR LP B RP
+percutorstatement -> PERCUTOR LP DI RP
+percutorstatement -> PERCUTOR LP AB RP
+golpestatement -> GOLPE LP RP
+vribatoestatement -> VRIBATO LP numberParam RP
+typeestatement -> LP NAME RP
+Scope -> LB Pre_Scope instruction RB
+whenestatement -> WHEN varbool condition boolParam THEN Scope
+whenestatement -> WHEN varnum condition numberParam THEN Scope
+whenestatement -> whenestatement whenestatement
+whenelseestatement -> WHENELSE Scope
+whenEstatementIncompletebool -> WHEN condition boolParam THEN Scope
+whenEstatementIncompletebool -> whenEstatementIncompletebool whenEstatementIncompletebool 
+whenEstatementIncompletenum -> WHEN condition numberParam THEN Scope
+whenEstatementIncompletenum  -> whenEstatementIncompletenum whenEstatementIncompletenum 
+Parameters -> ParameterIncomplete RP
+Parameters -> LP RP
+ParameterIncomplete ->  ParameterIncomplete COMMA NUM
+ParameterIncomplete ->  ParameterIncomplete COMMA varnum
+ParameterIncomplete ->  ParameterIncomplete COMMA bool
+ParameterIncomplete ->  ParameterIncomplete COMMA varbool
+ParameterIncomplete ->  ParameterIncomplete COMMA TEXT
+ParameterIncomplete -> LP NUM
+ParameterIncomplete -> LP varnum
+ParameterIncomplete -> LP bool
+ParameterIncomplete -> LP varbool
+ParameterIncomplete -> LP TEXT
+varnum -> SET NAME COMMA NUMBER
+varbool -> SET NAME COMMA bool
+varnum -> SET varnum COMMA NUMBER
+varbool -> SET varbool COMMA bool
+varnum -> NAME
+varbool -> NAME
+numberParam -> NUMBER
+numberParam -> varnum
+boolParam -> bool
+boolParam -> varbool
+bool -> FALSE
+bool -> TRUE
+bool ->  numberParam condition numberParam 
+bool ->  boolParam condition boolParam 
+condition -> LESS
+condition -> GREAT
+condition -> EQUAL
+condition -> LESSEQUAL
+condition -> GREATEEQUAL
+condition -> DIFFERENT
+Pre_Scope ->
+Auto ->

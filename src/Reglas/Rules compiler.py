@@ -1,8 +1,19 @@
+from urllib import request
+
+import requests
+
 from libs.ply.yacc import yacc
 from libs.ply.lex import lex, runmain
 
-File = open("Gramatica libre de contexto.csv")
-
+url = (
+	"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2zs0Xw_Oevqxxw6LszSyfJF5ELdIt9ijtROOPYYqzUEZtBs0eGTsAu3S2-drYKns7ILXZjY-jDnjG/pub?gid=1050343151&single=true&output=csv")
+response = request.urlopen(url)
+req_content = response.read().decode()
+print(req_content)
+File = open("Gramatica libre de contexto.csv", "w")
+File.write(req_content)
+File.close()
+File = open("Gramatica libre de contexto.csv", "r")
 CODE = ""
 output = open("REGLAS.py", "w")
 
@@ -59,7 +70,7 @@ for line in File:
 		token_list.append(tok)
 	CODE += "\n   '''\n"
 	CODE += "   p[0] =("
-	for a in range(1, len(token_list)-1):
+	for a in range(1, len(token_list) - 1):
 		if (a != len(token_list) - 2):
 			CODE += "p[" + str(a) + "], "
 		else:
