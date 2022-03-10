@@ -1,11 +1,16 @@
 from libs.ply.yacc import yacc
-from libs.ply.lex import lex
+from libs.ply.lex import lex, LexToken
+from src.Reglas.REGLAS import *
 
 ##Example code of a lexxer, just to predefinition test work##
 # --- Tokenizer
 
 # All tokens must be named in advance.
-Keywords = ('IF', 'ELSE', 'TRUE', 'FALSE')
+Keywords = (
+	'IF', 'ELSE', 'TRUE', 'FALSE', 'sc', 'FOR', 'TO', 'STEP', 'INCASE', 'ENDINCASE', 'DEF', 'PRINCIPAL', 'LP', 'RP',
+	'EXEC', 'PRINT', 'METRONOME', 'A', 'COMMA', 'D', 'SET', 'DOT', 'NEG', 'T', 'F', 'B', 'VERTICAL', 'ABANICO', 'I',
+	'PERCUTOR', 'DI', 'GOLPE', 'WHEN', 'THEN', 'WHENELSE', 'AB', 'VRIBATO', 'TEXT', 'LESSEQUAL', 'GREATEEQUAL',
+	'DIFFERENT', 'NUM')
 tokens = Keywords + ('PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN',
                      'NAME', 'NUMBER', 'POWER', 'LESS', 'GREAT', 'EQUAL', 'EEQUAL', 'LB', 'RB')
 
@@ -31,6 +36,7 @@ t_ELSE = r'else'
 t_TRUE = r'True'
 t_FALSE = r'False'
 t_NAME = r'\@[a-zA-Z_][a-zA-Z0-9_]*'
+t_sc = r'\;'
 
 
 # A function can be used if there is an associated action.
@@ -58,22 +64,31 @@ lexer = lex()
 
 '''Start of Parser'''
 precedence = (
+	('left', 'NUMBER'),
 	('left', 'PLUS', 'MINUS'),
 	('left', 'TIMES', 'DIVIDE'),
 	('left', 'POWER'),
 	('left', 'IF'),
-	('left', 'ELSE')
+	('left', 'ELSE'),
+	('left', 'LB')
 )
 
+start='Code'
+def p_Code(p):
+	'''
+	Code : instruction
+	'''
+	p[0] = (p[1])
 
-def p_code(p):
-	'''
-	code : expression
-		| ifexpression
-		| ifelseexpression
-		| scope
-	'''
-	p[0] = ("Code", p[1])
+
+# def p_code(p):
+# 	'''
+# 	code : expression
+# 		| ifexpression
+# 		| ifelseexpression
+# 		| scope
+# 	'''
+# 	p[0] = ("Code", p[1])
 
 
 def p_expression(p):
@@ -177,72 +192,67 @@ def p_more(p):
 	'''
 	p[0] = ('more', p[2], p[1], p[3])
 
-
-def p_eequal(p):
+#
+# def p_if(p):
+# 	'''
+# 	ifexpression : IF bool scope
+# 	'''
+# 	p[0] = ('ifexpression', p[1], p[2], p[3])
+#
+#
+# def p_else(p):
+# 	'''
+# 	elseexpression : ELSE scope
+# 	'''
+# 	p[0] = ('elseexpression', p[1], p[2])
+#
+#
+# def p_if_else(p):
+# 	'''
+# 	ifelseexpression : ifexpression elseexpression
+# 	'''
+# 	p[0] = ('ifelseexpression', p[1], p[2])
+#
+#
+# def p_bool_true(p):
+# 	'''
+# 	bool : TRUE
+# 	'''
+# 	p[0] = ('bool', p[1])
+#
+#
+# def p_bool_false(p):
+# 	'''
+# 	bool : FALSE
+# 	'''
+# 	p[0] = ('bool', p[1])
+#
+#
+# def p_variable(p):
+# 	'''
+# 	var : NAME EQUAL expression
+# 	'''
+# 	p[0] = ('var', p[1], p[3])
+#
+#
+# def p_statement(p):
+# 	'''
+# 	statement : bool
+# 	'''
+# 	p[0] = ('statement', p[1])
+#
+#
+# def p_scope(p):
+# 	'''
+# 	scope : LB expression RB
+# 		 | LB statement RB
+# 	'''
+# 	p[0] = ('scope', p[2])
+def p_REGLA_A(p):
 	'''
-	bool : expression EEQUAL expression
-		 | factor EEQUAL factor
-		 | var EEQUAL var
-		 | var EEQUAL expression
+	printstatement : bool
 	'''
-	p[0] = ('more', p[2], p[1], p[3])
-
-
-def p_if(p):
-	'''
-	ifexpression : IF bool scope
-	'''
-	p[0] = ('ifexpression', p[1], p[2], p[3])
-
-def p_else(p):
-	'''
-	elseexpression : ELSE scope
-	'''
-	p[0] = ('elseexpression', p[1], p[2])
-
-
-def p_if_else(p):
-	'''
-	ifelseexpression : ifexpression elseexpression
-	'''
-	p[0] = ('ifelseexpression', p[1], p[2])
-
-
-def p_bool_true(p):
-	'''
-	bool : TRUE
-	'''
-	p[0] = ('bool', p[1])
-
-
-def p_bool_false(p):
-	'''
-	bool : FALSE
-	'''
-	p[0] = ('bool', p[1])
-
-
-def p_variable(p):
-	'''
-	var : NAME EQUAL expression
-	'''
-	p[0] = ('var', p[1], p[3])
-
-
-def p_statement(p):
-	'''
-	statement : bool
-	'''
-	p[0] = ('statement', p[1])
-
-
-def p_scope(p):
-	'''
-	scope : LB expression RB
-		 | LB statement RB
-	'''
-	p[0] = ('scope', p[2])
-
+	p[0]=('bool',p[1])
 
 def p_error(p):
 	print(f'Syntax error at {p.value!r}')
@@ -252,5 +262,5 @@ def p_error(p):
 parser = yacc()
 
 # Parse an expression
-ast = parser.parse('if True {5<5} else {15+6}', debug=True)
+ast = parser.parse('if True {5<5;} else {15<6;};', debug=True)
 print(ast)
