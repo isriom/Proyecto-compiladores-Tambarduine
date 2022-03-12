@@ -1,23 +1,20 @@
 Code -> instruction
 instruction -> instruction instruction 
-instruction -> ifelsestatement sc
-instruction -> ifstatement sc
-instruction ->forstatement sc
-instruction -> incasestatement sc
-instruction -> defstatement sc
-instruction -> excecstatement sc
-instruction -> printstatement sc
-instruction -> metronomostatement sc
-instruction -> declarationstatement sc
-instruction -> negationstatement sc
-instruction -> tfstatement sc
-instruction -> ffstatement sc
-instruction -> abanicostatement sc
-intruction -> verticalstatement sc
-instruction -> percutorstatement sc
-instruction -> golpestatement sc
-instruction -> vribatoestatement sc
-instruction -> typeestatement sc
+instruction -> ifelsestatement ENDLINE
+instruction -> ifstatement ENDLINE
+instruction -> forstatement ENDLINE
+instruction -> incasestatement ENDLINE
+instruction -> defstatement ENDLINE
+instruction -> excecstatement ENDLINE
+instruction -> printstatement ENDLINE
+instruction -> declarationstatement ENDLINE
+instruction -> negationstatement ENDLINE
+instruction -> tfstatement ENDLINE
+instruction -> ffstatement ENDLINE
+instruction -> golpestatement ENDLINE
+instruction -> vribatoestatement ENDLINE
+instruction -> typeestatement ENDLINE
+instruction -> expressionestatement ENDLINE
 ifelsestatement -> ifstatement elsestatement
 ifstatement -> IF boolParam Scope
 elsestatement -> ELSE Scope
@@ -25,66 +22,63 @@ forstatement -> FOR NAME TO NUMBER STEP numberParam Scope
 forstatement -> FOR varnum TO NUMBER STEP numberParam Scope
 forstatement -> FOR NAME TO numberParam  Scope
 forstatement -> FOR varnum TO numberParam Scope
-incasestatement -> INCASE whenestatement whenelseestatement ENDINCASE
-incasestatement -> INCASE varbool whenEstatementIncompletebool whenelseestatement ENDINCASE
-incasestatement -> INCASE varnum whenEstatementIncompletenum whenelseestatement ENDINCASE
+incasestatement -> ENCASO whenestatement whenelseestatement FINCASO
+incasestatement -> ENCASO varbool whenEstatementIncompletebool whenelseestatement FINCASO
+incasestatement -> ENCASO varnum whenEstatementIncompletenum whenelseestatement FINCASO
 defstatement -> DEF NAME Parameters Scope
-defstatement -> DEF PRINCIPAL LP RP Scope
+defstatement -> DEF PRINCIPAL LPAREN RPAREN Scope
 excecstatement ->EXEC NAME Parameters
 printstatement -> PRINT Parameters
-metronomostatement -> METRONOME LP A COMMA numberParam RP
-metronomostatement -> METRONOME LP D COMMA numberParam RP
 declarationstatement -> varnum
 declarationstatement -> varbool
-negationstatement -> SET NAME DOT NEG
-tfstatement -> SET NAME DOT T
-ffstatement -> SET NAME DOT F
-abanicostatement -> ABANICO LP A RP
-abanicostatement -> ABANICO LP B RP
-verticalstatement -> VERTICAL LP D RP
-verticalstatement -> VERTICAL LP I RP
-percutorstatement -> PERCUTOR LP D RP
-percutorstatement -> PERCUTOR LP I RP
-percutorstatement -> PERCUTOR LP A RP
-percutorstatement -> PERCUTOR LP B RP
-percutorstatement -> PERCUTOR LP DI RP
-percutorstatement -> PERCUTOR LP AB RP
-golpestatement -> GOLPE LP RP
-vribatoestatement -> VRIBATO LP numberParam RP
-typeestatement -> LP NAME RP
-Scope -> LB Pre_Scope instruction RB
-whenestatement -> WHEN varbool condition boolParam THEN Scope
-whenestatement -> WHEN varnum condition numberParam THEN Scope
+negationstatement -> SET NAME . NEG
+tfstatement -> SET NAME . T
+ffstatement -> SET NAME . F
+golpestatement -> GOLPE LPAREN RPAREN
+vribatoestatement -> VIBRATO LPAREN numberParam RPAREN
+typeestatement -> LPAREN NAME RPAREN
+expressionestatement  -> expression
+Scope -> LSCOPE Pre_Scope instruction RSCOPE
+whenestatement -> CUANDO varbool condition boolParam ENTONS Scope
+whenestatement -> CUANDO varnum condition numberParam ENTONS Scope
 whenestatement -> whenestatement whenestatement
-whenelseestatement -> WHENELSE Scope
-whenEstatementIncompletebool -> WHEN condition boolParam THEN Scope
+whenelseestatement -> SINO Scope
+whenEstatementIncompletebool -> CUANDO condition boolParam ENTONS Scope
 whenEstatementIncompletebool -> whenEstatementIncompletebool whenEstatementIncompletebool 
-whenEstatementIncompletenum -> WHEN condition numberParam THEN Scope
+whenEstatementIncompletenum -> CUANDO condition numberParam ENTONS Scope
 whenEstatementIncompletenum  -> whenEstatementIncompletenum whenEstatementIncompletenum 
-Parameters -> ParameterIncomplete RP
-Parameters -> LP RP
+Parameters -> ParameterIncomplete RPAREN
+Parameters -> LPAREN RPAREN
 ParameterIncomplete ->  ParameterIncomplete COMMA NUM
 ParameterIncomplete ->  ParameterIncomplete COMMA varnum
 ParameterIncomplete ->  ParameterIncomplete COMMA bool
 ParameterIncomplete ->  ParameterIncomplete COMMA varbool
 ParameterIncomplete ->  ParameterIncomplete COMMA TEXT
-ParameterIncomplete -> LP NUM
-ParameterIncomplete -> LP varnum
-ParameterIncomplete -> LP bool
-ParameterIncomplete -> LP varbool
-ParameterIncomplete -> LP TEXT
+ParameterIncomplete -> LPAREN NUM
+ParameterIncomplete -> LPAREN varnum
+ParameterIncomplete -> LPAREN bool
+ParameterIncomplete -> LPAREN varbool
+ParameterIncomplete -> LPAREN TEXT
 varnum -> SET NAME COMMA NUMBER
-varbool -> SET NAME COMMA bool
+varbool -> SET NAME COMMA boolParam
+varnum -> SET NAME COMMA NAME
+varbool -> SET NAME COMMA NAME
 varnum -> SET varnum COMMA NUMBER
-varbool -> SET varbool COMMA bool
+varnum -> SET varnum COMMA expression
+varnum -> SET varnum COMMA NAME
+varbool -> SET varbool COMMA NAME
+varbool -> SET varbool COMMA boolParam
 varnum -> NAME
 varbool -> NAME
+varnum -> VAR
+varbool -> VAR
 numberParam -> NUMBER
 numberParam -> varnum
 boolParam -> bool
 boolParam -> varbool
 bool -> FALSE
 bool -> TRUE
+bool -> BOOLEAN
 bool ->  numberParam condition numberParam 
 bool ->  boolParam condition boolParam 
 condition -> LESS
@@ -94,4 +88,28 @@ condition -> LESSEQUAL
 condition -> GREATEEQUAL
 condition -> DIFFERENT
 Pre_Scope ->
-Auto ->
+expression -> numberParam PLUS numberParam
+expression -> numberParam parcialPlus MINUS numberParam
+expression -> numberParam TIMES numberParam
+expression -> numberParam DIVIDE numberParam
+expression -> numberParam INTDIVIDE numberParam
+expression -> numberParam MODULUS numberParam
+expression -> numberParam POWER numberParam
+expression -> LPAREN expression RPAREN
+expression -> expression PLUS expression 
+expression -> expression parcialPlus MINUS expression 
+expression -> expression  TIMES expression 
+expression -> expression  DIVIDE expression 
+expression -> expression  INTDIVIDE expression 
+expression -> expression  MODULUS expression 
+expression -> expression  POWER expression 
+expression -> expression PLUS numberParam
+expression -> expression parcialPlus MINUS numberParam
+expression -> expression  TIMES numberParam
+expression -> expression  DIVIDE numberParam
+expression -> expression  INTDIVIDE numberParam
+expression -> expression  MODULUS numberParam
+expression -> expression  POWER numberParam
+numberParam -> MINUS numberParam
+plus -> parcialPlus
+parcialPlus ->

@@ -9,6 +9,7 @@ url = (
 	"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2zs0Xw_Oevqxxw6LszSyfJF5ELdIt9ijtROOPYYqzUEZtBs0eGTsAu3S2-drYKns7ILXZjY-jDnjG/pub?gid=1050343151&single=true&output=csv")
 response = request.urlopen(url)
 req_content = response.read().decode()
+
 print(req_content)
 File = open("Gramatica libre de contexto.csv", "w")
 File.write(req_content)
@@ -21,6 +22,8 @@ output = open("REGLAS.py", "w")
 # --- Tokenizer
 
 # All tokens must be named in advance.
+literals = ['.']
+
 tokens = ('STAT', 'DIVISOR', 'COMMA')
 
 # Ignored characters
@@ -60,6 +63,8 @@ def t_space(t):
 
 line_number = 0
 for line in File:
+	if line == "\n":
+		continue
 	lexer = lex()
 	lexer.input(line)
 	token_list = []
