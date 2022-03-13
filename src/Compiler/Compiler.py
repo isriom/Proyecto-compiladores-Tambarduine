@@ -1,4 +1,4 @@
-from direct.showbase.PythonUtil import Singleton
+
 
 from src.Lexxer.Lex import *
 from src.ProjectParser.Parser import *
@@ -54,7 +54,7 @@ class Scope:
 		self.toCheck += [(t, c, t2)]
 
 
-class Compiler(metaclass=Singleton):
+class Compiler:
 
 	def __init__(self):
 		self.Scopes = {'actualScope': None, 'globalScope': None}
