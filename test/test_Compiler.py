@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
-import src
+import src.Compiler
+from src.Compiler.Compiler import Compiler
+
 LOG_NAME = '../logs/LOG_' + datetime.strftime(datetime.now(), '%Y %m %d %H %M') + '.log'
 logging.basicConfig(filename=LOG_NAME, format='%(levelname)s; %(message)s', level=logging.DEBUG,
                     datefmt='%m/%d/%Y %I:%M %p')
