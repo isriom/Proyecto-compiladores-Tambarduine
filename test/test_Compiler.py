@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
-from Compiler.Compiler import *
-
+import src
 LOG_NAME = '../logs/LOG_' + datetime.strftime(datetime.now(), '%Y %m %d %H %M') + '.log'
 logging.basicConfig(filename=LOG_NAME, format='%(levelname)s; %(message)s', level=logging.DEBUG,
                     datefmt='%m/%d/%Y %I:%M %p')
@@ -34,7 +33,7 @@ def test_if():
 
 def test_if_else():
 	example = "	if True {SET @xyz,5;} else{SET @xyz,5;};"
-	assert compiler.Parse(example) != None
+	assert compiler.Parse(example) is not None
 
 
 def test_if_false():
@@ -64,6 +63,8 @@ def test_declaration_bool():
 	example = "SET @xyz,False;"
 
 	assert compiler.Parse(example) != None
+
+
 def test_declaration_number_false():
 	code = "	if True: \n\txyz=5"
 
@@ -78,4 +79,3 @@ def test_declaration_bool_false():
 	example = "SET @xyz False;"
 
 	assert compiler.Parse(example) == None
-
