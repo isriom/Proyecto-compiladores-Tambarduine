@@ -25,6 +25,6 @@ def inc(x):
 
 
 def test_inc():
-	assert inc(3) == 5
+	assert inc(3) == 4
 
 ##IDE Test##

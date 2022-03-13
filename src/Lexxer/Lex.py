@@ -1,6 +1,6 @@
-from ply.yacc import yacc
-from ply.lex import lex, LexToken
-from ply.lex import TOKEN
+from libs.ply.yacc import yacc
+from libs.ply.lex import lex, LexToken
+from libs.ply.lex import TOKEN
 
 # LETRAS para hits y print !!!
 
@@ -14,17 +14,15 @@ hits = (
 	'ABANICO', 'VERTICAL', 'PERCUTOR', 'GOLPE', 'VIBRATO', 'METRONOMO'
 )
 letters = (
-	'AB','DI','A', 'B', 'D', 'I'
+	'AB', 'DI', 'A', 'B', 'D', 'I'
 )
-
-
 
 # List of token names.   This is always required
 tokens = (
-	         'KEYWORD', 'NUM', 'LETTERS', 'NAME', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
-	         'ID2', 'VAR', 'DOT','LESSEQUAL', 'GREATEEQUAL', 'LESS', 'GREAT', 'EQUALEQUAL','EQUAL', 'DIFFERENT',
+	         'KEYWORD', 'LETTERS', 'NAME', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
+	         'ID2', 'VAR', 'DOT', 'LESSEQUAL', 'GREATEEQUAL', 'LESS', 'GREAT', 'EQUALEQUAL', 'EQUAL', 'DIFFERENT',
 	         'NUMBER', 'PLUS', 'MINUS', 'POWER', 'TIMES', 'INTDIVIDE', 'DIVIDE', 'MODULUS',
-	         'LSCOPE', 'RSCOPE', 'LPAREN', 'RPAREN', 'COMMA', 'ENDLINE') + keywords + booleanOps + hits + letters
+	         'LSCOPE', 'RSCOPE', 'LPAREN', 'RPAREN', 'COMMA', 'ENDLINE','TEXT') + keywords + booleanOps + hits + letters
 
 # Regular expression rules for simple tokens
 t_LSCOPE = r'\{'
@@ -49,7 +47,6 @@ t_EQUAL = r'='
 t_DIFFERENT = r'!='
 
 
-
 ###################################### NEWLINE
 def t_newline(t):
 	r'\n+'
@@ -67,6 +64,7 @@ def t_error(t):
 	print("Illegal character '%s'" % t.value[0])
 	t.lexer.skip(1)
 
+
 ###################################### TOKENS
 
 def t_bralce(t):
@@ -79,6 +77,7 @@ def t_BOOLEAN(t):
 	r'(True|False)'
 	t.value = str(t.value)
 	return t
+
 
 def t_PRINT(t):
 	r'println!'
@@ -93,6 +92,7 @@ def t_FINCASO(t):
 	t.value = str(t.value)
 	return t
 
+
 '''
 def t_ID2(t):
     r'.[a-zA-Z_]+'
@@ -102,6 +102,7 @@ def t_ID2(t):
     else:
         t_error(t)
 '''
+
 
 def t_ID(t):
 	r'[a-zA-Z_]+'
@@ -121,7 +122,6 @@ def t_ID(t):
 		t_error(t)
 
 
- 
 def t_NUMBER(t):
 	r'[0-9]+'
 	t.value = int(t.value)
@@ -155,8 +155,10 @@ lexer.input(data)
 
 # Tokenize
 for tok in lexer:
- 	#print(tok)
- 	print("Class:" + tok.type + " Value:" + str(tok.value) + " Line:" + str(tok.lineno) + " Pos:" + str(tok.lexpos))
+	# print(tok)
+	print("Class:" + tok.type + " Value:" + str(tok.value) + " Line:" + str(tok.lineno) + " Pos:" + str(tok.lexpos))
+
+
 #
 
 def GetLexer():

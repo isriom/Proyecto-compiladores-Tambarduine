@@ -4,6 +4,7 @@ from src.Reglas.REGLAS import *
 
 '''Start of Parser'''
 precedence = (
+	('left', 'SET', 'VAR'),
 	('left', 'NUMBER'),
 	('left', 'PLUS', 'MINUS'),
 	('left', 'TIMES', 'DIVIDE', 'INTDIVIDE', 'MODULUS'),
@@ -24,11 +25,14 @@ def p_REGLA_0(p):
 
 
 def p_error(p):
-	print(f'Syntax error at {p.value!r}')
+	if p == None:
+		print("end of file reached, Parsed finished or most probabily Syntax error at the end of file")
+	else:
+		print(f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}')
 
 
 # Build the parser
-parser = yacc()
+parser = yacc(debug=True)
 
 
 # ast = parser.parse('if True {SET @xyz,5;} else {SET @xyz,5;};', debug=True)
