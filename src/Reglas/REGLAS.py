@@ -196,381 +196,391 @@ def p_REGLA_38(p):
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_39(p):
    '''
-   declarationstatement : SET var COMMA var 
+   declarationstatement : SET var COMMA NUMBER 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_40(p):
    '''
-   negationstatement : SET var NEG 
+   declarationstatement : SET var COMMA var 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_41(p):
    '''
-   tfstatement : SET var T 
+   negationstatement : SET var DOT NEG 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_42(p):
    '''
-   ffstatement : SET var F 
+   tfstatement : SET var DOT T 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_43(p):
    '''
-   abanicostatement : ABANICO LPAREN A RPAREN 
+   ffstatement : SET var DOT F 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_44(p):
    '''
-   abanicostatement : ABANICO LPAREN B RPAREN 
+   abanicostatement : ABANICO LPAREN A RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_45(p):
    '''
-   verticalstatement : VERTICAL LPAREN D RPAREN 
+   abanicostatement : ABANICO LPAREN B RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_46(p):
    '''
-   verticalstatement : VERTICAL LPAREN I RPAREN 
+   verticalstatement : VERTICAL LPAREN D RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_47(p):
    '''
-   percutorstatement : PERCUTOR LPAREN D RPAREN 
+   verticalstatement : VERTICAL LPAREN I RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_48(p):
    '''
-   percutorstatement : PERCUTOR LPAREN I RPAREN 
+   percutorstatement : PERCUTOR LPAREN D RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_49(p):
    '''
-   percutorstatement : PERCUTOR LPAREN A RPAREN 
+   percutorstatement : PERCUTOR LPAREN I RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_50(p):
    '''
-   percutorstatement : PERCUTOR LPAREN B RPAREN 
+   percutorstatement : PERCUTOR LPAREN A RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_51(p):
    '''
-   percutorstatement : PERCUTOR LPAREN DI RPAREN 
+   percutorstatement : PERCUTOR LPAREN B RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_52(p):
    '''
-   percutorstatement : PERCUTOR LPAREN AB RPAREN 
+   percutorstatement : PERCUTOR LPAREN DI RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
 def p_REGLA_53(p):
    '''
+   percutorstatement : PERCUTOR LPAREN AB RPAREN 
+   '''
+   p[0] =(p[1], p[2], p[3], p[4] )
+def p_REGLA_54(p):
+   '''
    golpestatement : GOLPE LPAREN RPAREN 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_54(p):
+def p_REGLA_55(p):
    '''
    vribatoestatement : VIBRATO LPAREN numberParam RPAREN 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
-def p_REGLA_55(p):
+def p_REGLA_56(p):
    '''
    typeestatement : LPAREN var RPAREN 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_56(p):
+def p_REGLA_57(p):
    '''
    expressionestatement : expression 
    '''
    p[0] =(p[1] )
-def p_REGLA_57(p):
+def p_REGLA_58(p):
    '''
    Scope : LSCOPE Pre_Scope instruction RSCOPE 
    '''
    p[0] =(p[1], p[2], p[3], p[4] )
-def p_REGLA_58(p):
+def p_REGLA_59(p):
    '''
    whenestatement : CUANDO var condition boolParam ENTONS Scope 
    '''
    p[0] =(p[1], p[2], p[3], p[4], p[5], p[6] )
-def p_REGLA_59(p):
+def p_REGLA_60(p):
    '''
    whenestatement : CUANDO var condition numberParam ENTONS Scope 
    '''
    p[0] =(p[1], p[2], p[3], p[4], p[5], p[6] )
-def p_REGLA_60(p):
+def p_REGLA_61(p):
    '''
    whenestatement : whenestatement whenestatement 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_61(p):
+def p_REGLA_62(p):
    '''
    whenelseestatement : SINO Scope 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_62(p):
+def p_REGLA_63(p):
    '''
    whenEstatementIncompletebool : CUANDO condition boolParam ENTONS Scope 
    '''
    p[0] =(p[1], p[2], p[3], p[4], p[5] )
-def p_REGLA_63(p):
+def p_REGLA_64(p):
    '''
    whenEstatementIncompletebool : whenEstatementIncompletebool whenEstatementIncompletebool 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_64(p):
+def p_REGLA_65(p):
    '''
    whenEstatementIncompletenum : CUANDO condition numberParam ENTONS Scope 
    '''
    p[0] =(p[1], p[2], p[3], p[4], p[5] )
-def p_REGLA_65(p):
+def p_REGLA_66(p):
    '''
    whenEstatementIncompletenum : whenEstatementIncompletenum whenEstatementIncompletenum 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_66(p):
+def p_REGLA_67(p):
    '''
    Parameters : ParameterIncomplete RPAREN 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_67(p):
+def p_REGLA_68(p):
    '''
    Parameters : LPAREN RPAREN 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_68(p):
+def p_REGLA_69(p):
    '''
    ParameterIncomplete : ParameterIncomplete COMMA numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_69(p):
+def p_REGLA_70(p):
    '''
    ParameterIncomplete : ParameterIncomplete COMMA var 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_70(p):
+def p_REGLA_71(p):
    '''
    ParameterIncomplete : ParameterIncomplete COMMA boolParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_71(p):
+def p_REGLA_72(p):
    '''
    ParameterIncomplete : ParameterIncomplete COMMA TEXT 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_72(p):
+def p_REGLA_73(p):
    '''
    ParameterIncomplete : LPAREN numberParam 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_73(p):
+def p_REGLA_74(p):
    '''
    ParameterIncomplete : LPAREN var 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_74(p):
+def p_REGLA_75(p):
    '''
    ParameterIncomplete : LPAREN boolParam 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_75(p):
+def p_REGLA_76(p):
    '''
    ParameterIncomplete : LPAREN TEXT 
    '''
    p[0] =(p[1], p[2] )
-def p_REGLA_76(p):
+def p_REGLA_77(p):
    '''
    var : VAR 
    '''
    p[0] =(p[1] )
-def p_REGLA_77(p):
+def p_REGLA_78(p):
    '''
    numberParam : var 
    '''
    p[0] =(p[1] )
-def p_REGLA_78(p):
+def p_REGLA_79(p):
    '''
    numberParam : NUMBER 
    '''
    p[0] =(p[1] )
-def p_REGLA_79(p):
+def p_REGLA_80(p):
    '''
    boolParam : bool 
    '''
    p[0] =(p[1] )
-def p_REGLA_80(p):
+def p_REGLA_81(p):
    '''
    boolParam : var 
    '''
    p[0] =(p[1] )
-def p_REGLA_81(p):
+def p_REGLA_82(p):
    '''
    bool : BOOLEAN 
    '''
    p[0] =(p[1] )
-def p_REGLA_82(p):
+def p_REGLA_83(p):
    '''
    bool : numberParam condition numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_83(p):
+def p_REGLA_84(p):
    '''
    bool : boolParam condition boolParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_84(p):
+def p_REGLA_85(p):
    '''
    condition : LESS 
    '''
    p[0] =(p[1] )
-def p_REGLA_85(p):
+def p_REGLA_86(p):
    '''
    condition : GREAT 
    '''
    p[0] =(p[1] )
-def p_REGLA_86(p):
+def p_REGLA_87(p):
    '''
    condition : EQUAL 
    '''
    p[0] =(p[1] )
-def p_REGLA_87(p):
+def p_REGLA_88(p):
    '''
    condition : LESSEQUAL 
    '''
    p[0] =(p[1] )
-def p_REGLA_88(p):
+def p_REGLA_89(p):
    '''
    condition : GREATEEQUAL 
    '''
    p[0] =(p[1] )
-def p_REGLA_89(p):
+def p_REGLA_90(p):
    '''
    condition : DIFFERENT 
    '''
    p[0] =(p[1] )
-def p_REGLA_90(p):
+def p_REGLA_91(p):
    '''
    Pre_Scope : 
    '''
    p[0] =()
-def p_REGLA_91(p):
+def p_REGLA_92(p):
    '''
    numberParam : expression 
    '''
    p[0] =(p[1] )
-def p_REGLA_92(p):
+def p_REGLA_93(p):
    '''
    expression : numberParam PLUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_93(p):
+def p_REGLA_94(p):
    '''
    expression : numberParam MINUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_94(p):
+def p_REGLA_95(p):
    '''
    expression : numberParam TIMES numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_95(p):
+def p_REGLA_96(p):
    '''
    expression : numberParam DIVIDE numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_96(p):
+def p_REGLA_97(p):
    '''
    expression : numberParam INTDIVIDE numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_97(p):
+def p_REGLA_98(p):
    '''
    expression : numberParam MODULUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_98(p):
+def p_REGLA_99(p):
    '''
    expression : numberParam POWER numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_99(p):
+def p_REGLA_100(p):
    '''
    expression : LPAREN expression RPAREN 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_100(p):
+def p_REGLA_101(p):
    '''
    expression : expression PLUS expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_101(p):
+def p_REGLA_102(p):
    '''
    expression : expression MINUS expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_102(p):
+def p_REGLA_103(p):
    '''
    expression : expression TIMES expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_103(p):
+def p_REGLA_104(p):
    '''
    expression : expression DIVIDE expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_104(p):
+def p_REGLA_105(p):
    '''
    expression : expression INTDIVIDE expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_105(p):
+def p_REGLA_106(p):
    '''
    expression : expression MODULUS expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_106(p):
+def p_REGLA_107(p):
    '''
    expression : expression POWER expression 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_107(p):
+def p_REGLA_108(p):
    '''
    expression : expression PLUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_108(p):
+def p_REGLA_109(p):
    '''
    expression : expression MINUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_109(p):
+def p_REGLA_110(p):
    '''
    expression : expression TIMES numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_110(p):
+def p_REGLA_111(p):
    '''
    expression : expression DIVIDE numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_111(p):
+def p_REGLA_112(p):
    '''
    expression : expression INTDIVIDE numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_112(p):
+def p_REGLA_113(p):
    '''
    expression : expression MODULUS numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_113(p):
+def p_REGLA_114(p):
    '''
    expression : expression POWER numberParam 
    '''
    p[0] =(p[1], p[2], p[3] )
-def p_REGLA_114(p):
+def p_REGLA_115(p):
    '''
    numberParam : MINUS numberParam 
    '''
    p[0] =(p[1], p[2] )
+def p_REGLA_116(p):
+   '''
+   numberParam : numberParam DOT numberParam 
+   '''
+   p[0] =(p[1], p[2], p[3] )

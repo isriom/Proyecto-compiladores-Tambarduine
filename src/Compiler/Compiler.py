@@ -20,7 +20,6 @@ class Scope:
 		self.lineno = t.lineno
 		self.lexpos = t.lexpos
 		self.previous = None
-		self.comp = Compiler.instance
 		self.toCheck = []
 		self.toCheckcon = []
 
