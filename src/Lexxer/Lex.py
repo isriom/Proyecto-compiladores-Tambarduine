@@ -1,3 +1,6 @@
+#from ply.yacc import yacc
+#from ply.lex import lex, LexToken
+#from ply.lex import TOKEN
 from libs.ply.yacc import yacc
 from libs.ply.lex import lex, LexToken
 from libs.ply.lex import TOKEN
@@ -19,14 +22,15 @@ letters = (
 
 # List of token names.   This is always required
 tokens = (
-	         'KEYWORD', 'LETTERS', 'NAME', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
+	         'KEYWORD', 'LETTERS', 'NAME','TEXT', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
 	         'ID2', 'VAR', 'DOT', 'LESSEQUAL', 'GREATEEQUAL', 'LESS', 'GREAT', 'EQUALEQUAL', 'EQUAL', 'DIFFERENT',
 	         'NUMBER', 'PLUS', 'MINUS', 'POWER', 'TIMES', 'INTDIVIDE', 'DIVIDE', 'MODULUS',
-	         'LSCOPE', 'RSCOPE', 'LPAREN', 'RPAREN', 'COMMA', 'ENDLINE','TEXT') + keywords + booleanOps + hits + letters
+	         'LSCOPE', 'RSCOPE', 'QUOTES', 'LPAREN', 'RPAREN', 'COMMA', 'ENDLINE') + keywords + booleanOps + hits + letters
 
 # Regular expression rules for simple tokens
 t_LSCOPE = r'\{'
 t_RSCOPE = r'\}'
+t_QUOTES = r'"'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_POWER = r'\*\*'
@@ -103,7 +107,6 @@ def t_ID2(t):
         t_error(t)
 '''
 
-
 def t_ID(t):
 	r'[a-zA-Z_]+'
 	if t.value.upper() in keywords:
@@ -119,7 +122,9 @@ def t_ID(t):
 		t.type = t.value.upper()
 		return t
 	else:
-		t_error(t)
+		t.type = 'TEXT'
+		t.value = str(t.value)
+		return t
 
 
 def t_NUMBER(t):
@@ -134,18 +139,15 @@ def t_VAR(t):
 	return t
 
 
-'''
-def t_WORD(t):
-    r'[a-zA-Z_]+'
-    t.value = str(t.value)    
-    return t
 
-'''
+
+
+
 
 # Build the lexer
 lexer = lex()
 
-data = '''>= <= = ==> ,{ SET println! If @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
+data = '''>= <= = ==> ,{ SET println! If "textoprueba. @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
 # data = '''3 + 5 * 10 - 20 '''
 # data = 'a = 3'
 # data = '1 + 5\nabce\n77\nif yo'
