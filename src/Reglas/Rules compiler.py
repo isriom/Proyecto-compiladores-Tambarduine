@@ -74,12 +74,12 @@ for line in File:
 	for tok in lexer:
 		token_list.append(tok)
 	CODE += "\n   '''\n"
-	CODE += "   p[0] =("
+	CODE += "   p[0] =(p.slice[0].type,"
 	for a in range(1, len(token_list) - 1):
 		if (a != len(token_list) - 2):
-			CODE += "p[" + str(a) + "], "
+			CODE += "p.slice[" + str(a) + "], "
 		else:
-			CODE += "p[" + str(a) + "] "
+			CODE += "p.slice[" + str(a) + "] "
 
 	CODE += ")"
 	print(token_list)

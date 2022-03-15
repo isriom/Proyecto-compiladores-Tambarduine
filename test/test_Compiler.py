@@ -189,7 +189,7 @@ def test_Metronomo_false():
 def test_print():
 	code = "	if True: \n\txyz=5"
 
-	example = 'SET @curso, 1;println!("este es el proyecto número",@curso,"de compiladores");'
+	example = 'SET @curso, 1;println!("este es el proyecto numero",@curso,"de compiladores");'
 
 	assert compiler.Parse(example) != None
 
