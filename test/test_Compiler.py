@@ -273,7 +273,7 @@ def test_Rutina():
 
 
 def test_Exce():
-	example = "Def @Rutina(h,m,a){SET @var2,20;};Exec @Rutina(1,2,3);"
+	example = "Def @Rutina(){SET @var2,20;};Exec @Rutina(1,2,3);"
 	assert compiler.Parse(example) != None
 
 

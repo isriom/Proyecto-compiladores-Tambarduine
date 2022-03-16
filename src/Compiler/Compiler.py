@@ -1,3 +1,4 @@
+from libs.ply.yacc import YaccSymbol
 from src.Lexxer.Lex import *
 from src.ProjectParser.Parser import *
 
@@ -94,15 +95,19 @@ class Compiler:
 		code += '\n'
 
 	def readTree(self, ast, tablevel=0):
+		length = 0
 		if ast is None:
 			return
-		if type(ast) != tuple:
+		if type(ast) == YaccSymbol:
 			print(ast.__dict__)
 			ast = ast.value
+		if type(ast) == LexToken:
+			print(ast.__dict__)
+			ast = (ast.type, ast.value, ast)
 		length = len(ast)
 
 		Code = ''
-		if ast[0] == ';':
+		if ast[0] == 'ENDLINE':
 			return ''
 		if ast[0] == ':':
 			return ''
@@ -123,12 +128,17 @@ class Compiler:
 			Code += ("\t" * tablevel) + self.readTree(ast[3], tablevel + 1)
 
 		elif ast[0] == 'forstatement':
-			Code += ("\t" * tablevel) + "FOR" + self.readTree(ast[2]) + 'TO' + self.readTree(ast[4])
-			if length > 6:
-				Code += 'STEP' + self.readTree(ast[6])
-				Code += ("\t" * tablevel) + self.readTree(ast[7], tablevel + 1)
+			print(ast[2].__dict__)
+			if ast[2].defined == None:
+				Code += ("\t" * tablevel) + "FOR " + self.readTree(ast[2]) + 'in range( 1,' + self.readTree(ast[4])
 			else:
-				Code += ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1)
+				Code += ("\t" * tablevel) + "FOR " + self.readTree(ast[2])[:-2] + ' in range(' + self.readTree(
+					ast[2]) + ',' + self.readTree(ast[4])
+			if length > 6:
+				Code += ',' + self.readTree(ast[6])
+				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[7], tablevel + 1)
+			else:
+				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1)
 
 		elif ast[0] == 'incasestatement':
 			if length == 5:
@@ -136,6 +146,35 @@ class Compiler:
 				Code += ("\t" * tablevel) + self.readTree(ast[3])
 			else:
 				Code += self.ENCASO(ast[3], tablevel, self.readTree(ast[2]))
+
+		elif ast[0] == 'defstatement':
+			Code += ("\t" * tablevel) + 'def '
+			if length == 5:
+				Code += self.readTree(ast[2]) + self.readTree(ast[3]) + ':\n'
+				Code += ("\t" * tablevel) + self.readTree(ast[4]) + '\n'
+			else:
+				Code += 'Principal()' + ':\n'
+				Code += ("\t" * tablevel) + self.readTree(ast[5]) + '\n'
+
+		elif ast[0] == 'excecstatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + self.readTree(ast[3]) + ":\n"
+
+		elif ast[0] == 'printstatement':
+			Code += ("\t" * tablevel) + 'print(' + self.readTree(ast[2]) + ")\n"
+
+		elif ast[0] == 'metronomostatement':
+			Code += ("\t" * tablevel) + 'Pandereta.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
+				ast[5]) + ")\n"
+
+
+		elif ast[0] == 'declarationstatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=' + self.readTree(ast[4])
+			"\n"
+
+
+		elif ast[0] == 'negationstatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=not ' + self.readTree(ast[2]) + "\n"
+
 
 		elif ast[0] == 'whenestatement':
 			if length <= 3:
@@ -178,6 +217,6 @@ class Compiler:
 if __name__ == '__main__':
 	comp = Compiler()
 	ast = comp.Parse(
-		'EnCaso @var Cuando >5 EnTons{SET @var2,10;} Cuando >7 EnTons{SET @var3,10;}SiNo{SET @var3,20;} Fin-EnCaso;')
+		'for @xyz to 15 Step 15{SET @mdd,15;};')
 	print('ast')
 	print(ast)

@@ -562,6 +562,7 @@ def p_REGLA_80(p):
 	'''
 	var : VAR
 	'''
+	p.slice[0].defined=None
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
