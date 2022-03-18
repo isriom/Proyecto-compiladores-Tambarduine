@@ -26,19 +26,21 @@ compiler = Compiler()
 
 
 def test_declaration_number():
-	code = "	if True: \n\txyz=5"
+	code = "xyz =5\n"
 
 	example = "SET @xyz,5;"
 
 	assert compiler.Parse(example) != None
+	assert compiler.code == code
 
 
 def test_declaration_bool():
-	code = "	if True: \n\txyz=5"
+	code = "xyz =False\n"
 
 	example = "SET @xyz,False;"
 
 	assert compiler.Parse(example) != None
+	assert compiler.code == code
 
 
 def test_declaration_number_false():
@@ -58,19 +60,23 @@ def test_declaration_bool_false():
 
 
 def test_type_bool():
-	code = "	if True: \n\txyz=5"
+	code = "xyz =True\ntype(xyz )\n"
 
 	example = "SET @xyz,True; type(@xyz);"
 
 	assert compiler.Parse(example) != None
+	assert compiler.code == code
+
 
 
 def test_type_num():
-	code = "	if True: \n\txyz=5"
+	code = "xyz =(5+2/2)\ntype(xyz )\n"
 
 	example = "SET @xyz, (5+2/2); type(@xyz);"
 
 	assert compiler.Parse(example) != None
+	assert compiler.code == code
+
 
 
 def test_arithmetic():
@@ -185,7 +191,22 @@ def test_Metronomo_false():
 	assert compiler.Parse(example) == None
 
 
-##Falta agregar TEXT al keyboard##
+def test_Golpe():
+	code = "	if True: \n\txyz=5"
+
+	example = "Golpe();"
+
+	assert compiler.Parse(example) != None
+
+
+def test_Golpe_false():
+	code = "	if True: \n\txyz=5"
+
+	example = "Golpe(A);"
+
+	assert compiler.Parse(example) == None
+
+
 def test_print():
 	code = "	if True: \n\txyz=5"
 

@@ -2,16 +2,6 @@ from libs.ply.yacc import YaccSymbol
 from src.Lexxer.Lex import *
 from src.ProjectParser.Parser import *
 
-# from src.Reglas.REGLAS import *
-
-Input = '''
-SET @xyz, 15;
-if @xyz<10 {
-println!(@xyz)
-}
-
-'''
-
 
 class Scope:
 	def __init__(self, t):
@@ -20,7 +10,9 @@ class Scope:
 		self.lexpos = t.lexpos
 		self.previous = None
 		self.toCheck = []
+		self.toCheckfor = []
 		self.toCheckcon = []
+		self.code = ''
 
 		pass
 
@@ -29,42 +21,47 @@ class Scope:
 		self.lexpos = t.lexpos
 
 	def GetType(self, t):
-		if not (t.value in self.variables):
-			self.toCheck += [t]
-			return 'NAME'
+		if not (t in self.variables):
+			return None
 		else:
-			return self.variables[t]['TYPE']
+			return self.variables[t].TYPEOF
 
 	def insert(self, t):
-
-		if type(t[4]) is str:
-			self.variables[t[2]] = {'TYPE': 'BOOLEAN'}
+		if type(t[1]) == str:
+			self.variables[t[0]] = t[1]
 		else:
-			self.variables[t[2]] = {'TYPE': type(t[4])}
-		print(self.__dict__)
-		pass
+			tmpvalue = self.GetType(t[1].value)
+			if tmpvalue == None:
+				self.insertCheck(('ADJUST', t[0], t[1]))
+			self.variables[t[0]] = tmpvalue
+
+	def insertCheck(self, checkTuple):
+		if checkTuple[0] == 'CON' or checkTuple[0] == 'NUMBER':
+			self.toCheckcon.append(checkTuple)
+		elif checkTuple[0] == 'FOR':
+			self.toCheckfor.append(checkTuple)
+		else:
+			self.toCheck.append(checkTuple)
 
 	def AddScope(self, scope):
 		self.previous = scope
 		pass
 
-	def insertCheck(self, t, c, t2):
-		self.toCheck += [(t, c, t2)]
-
 
 class Compiler:
 
 	def __init__(self):
-		self.Scopes = {'actualScope': None, 'globalScope': None}
+		self.Scopes = {'actualScope': None, 'globalScope': None, 'all': []}
 		self.lexer = GetLexer()
 		self.parser = GetParser()
 		self.parser.Comp = self
 		self.tablevel = 0
-		self.Code = ''
+		self.Code = '\n'
 
 	def Parse(self, text):
 		parse = self.parser.parse(text, debug=True)
-		self.readTree(parse)
+		self.code = self.readTree(parse)
+		print(self.code)
 		return parse
 
 	def GetCode(self):
@@ -77,32 +74,36 @@ class Compiler:
 			return None
 
 	def Insert(self, T):
-		print(T.__dict__)
 		self.Scopes['actualScope'].insert(T)
 
-	def AddGlobal(self, scope):
-		self.Scopes['globalScope'] = scope
+	def insertCheck(self, checkTuple):
+		self.Scopes['actualScope'].insertCheck(checkTuple)
+
+	def AddGlobal(self, Scope):
+		if self.Scopes['globalScope'] != None:
+			raise SyntaxError
+		else:
+			self.Scopes['globalScope'] = Scope
 		pass
 
 	def CreateScope(self, T):
-		if Compiler().Scopes['actualScope'] is None:
-			print(comp)
-			Compiler().Scopes['actualScope'] = Scope(T)
-		else:
-			Compiler().Scopes['actualScope'].addScope(self)
+		new = Scope(T)
+		if self.Scopes['actualScope'] != None:
+			self.Scopes['actualScope'].AddScope(new)
+		self.Scopes['all'].append(new)
+		self.Scopes['actualScope'] = new
+		return new
 
-	def insertCode(self, code):
-		code += '\n'
+	def CloseScope(self):
+		if self.Scopes['actualScope'].previous != None:
+			self.Scopes['actualScope'] = self.Scopes['actualScope'].previous
 
 	def readTree(self, ast, tablevel=0):
-		length = 0
 		if ast is None:
 			return
 		if type(ast) == YaccSymbol:
-			print(ast.__dict__)
 			ast = ast.value
 		if type(ast) == LexToken:
-			print(ast.__dict__)
 			ast = (ast.type, ast.value, ast)
 		length = len(ast)
 
@@ -113,31 +114,31 @@ class Compiler:
 			return ''
 		elif ast[0] == 'instruction':
 			for instruction in range(1, length):
-				Code += ("\t" * tablevel) + self.readTree(ast[instruction], tablevel)
+				Code += self.readTree(ast[instruction], tablevel)
 
 		elif ast[0] == 'ifelsestatement':
-			Code += ("\t" * tablevel) + self.readTree(ast[1], tablevel) + '\n' + ("\t" * tablevel) + self.readTree(
-				ast[2], tablevel)
+			Code += ("\t" * tablevel) + self.readTree(ast[1], tablevel) + '\n'
+			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel)
 
 		elif ast[0] == 'elsestatement':
 			Code += ("\t" * tablevel) + "Else" + ":\n"
 			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel + 1)
 
 		elif ast[0] == 'ifstatement':
-			Code += ("\t" * tablevel) + "if" + self.readTree(ast[2]) + ":\n"
+			Code += ("\t" * tablevel) + "if " + self.readTree(ast[2]) + ":\n"
 			Code += ("\t" * tablevel) + self.readTree(ast[3], tablevel + 1)
 
-		elif ast[0] == 'forstatement':
-			print(ast[2].__dict__)
-			if ast[2].defined == None:
-				Code += ("\t" * tablevel) + "FOR " + self.readTree(ast[2]) + 'in range( 1,' + self.readTree(ast[4])
+		elif ast[0] == 'forstatement':  # need a refactor
+			if ast[2].defined == 'FOR' or ast[2].defined == None:
+				Code += ("\t" * tablevel) + "for " + self.readTree(ast[2]) + 'in range( 1,' + self.readTree(ast[4])
 			else:
-				Code += ("\t" * tablevel) + "FOR " + self.readTree(ast[2])[:-2] + ' in range(' + self.readTree(
+				Code += ("\t" * tablevel) + "for " + self.readTree(ast[2]) + ' in range(' + self.readTree(
 					ast[2]) + ',' + self.readTree(ast[4])
 			if length > 6:
 				Code += ',' + self.readTree(ast[6])
 				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[7], tablevel + 1)
 			else:
+
 				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1)
 
 		elif ast[0] == 'incasestatement':
@@ -151,30 +152,56 @@ class Compiler:
 			Code += ("\t" * tablevel) + 'def '
 			if length == 5:
 				Code += self.readTree(ast[2]) + self.readTree(ast[3]) + ':\n'
-				Code += ("\t" * tablevel) + self.readTree(ast[4]) + '\n'
+				Code += ("\t" * tablevel) + self.readTree(ast[4], tablevel + 1) + '\n'
 			else:
 				Code += 'Principal()' + ':\n'
-				Code += ("\t" * tablevel) + self.readTree(ast[5]) + '\n'
+				Code += ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1) + '\n'
 
 		elif ast[0] == 'excecstatement':
-			Code += ("\t" * tablevel) + self.readTree(ast[2]) + self.readTree(ast[3]) + ":\n"
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + self.readTree(ast[3]) + "\n"
 
 		elif ast[0] == 'printstatement':
-			Code += ("\t" * tablevel) + 'print(' + self.readTree(ast[2]) + ")\n"
+			Code += ("\t" * tablevel) + 'print' + self.readTree(ast[2]) + "\n"
 
 		elif ast[0] == 'metronomostatement':
 			Code += ("\t" * tablevel) + 'Pandereta.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
 				ast[5]) + ")\n"
 
-
 		elif ast[0] == 'declarationstatement':
-			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=' + self.readTree(ast[4])
-			"\n"
-
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=' + self.readTree(ast[4]) + "\n"
 
 		elif ast[0] == 'negationstatement':
 			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=not ' + self.readTree(ast[2]) + "\n"
 
+		elif ast[0] == 'tfstatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=True ' + "\n"
+
+		elif ast[0] == 'ffstatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=False ' + "\n"
+
+		elif ast[0] == 'abanicostatement':
+			Code += ("\t" * tablevel) + 'Pandereta.abanico(' + self.readTree(ast[3]) + ")\n"
+
+		elif ast[0] == 'verticalstatement':
+			Code += ("\t" * tablevel) + 'Pandereta.vertical(' + self.readTree(ast[3]) + ")\n"
+
+		elif ast[0] == 'percutorstatement':
+			Code += ("\t" * tablevel) + 'Pandereta.percutor(' + self.readTree(ast[3]) + ")\n"
+
+		elif ast[0] == 'golpestatement':
+			Code += ("\t" * tablevel) + "Pandereta.golpe()\n"
+
+		elif ast[0] == 'vribatoestatement':
+			Code += ("\t" * tablevel) + 'Pandereta.percutor(' + self.readTree(ast[3]) + ")\n"
+
+		elif ast[0] == 'typeestatement':
+			Code += ("\t" * tablevel) + 'type(' + self.readTree(ast[3]) + ")\n"
+
+		elif ast[0] == 'expressionestatement':
+			Code += ("\t" * tablevel) + self.readTree(ast[1])
+
+		elif ast[0] == 'Scope':
+			Code += self.readTree(ast[3], tablevel)
 
 		elif ast[0] == 'whenestatement':
 			if length <= 3:
@@ -189,21 +216,65 @@ class Compiler:
 			Code += ("\t" * tablevel) + "Else" + ":\n"
 			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel + 1)
 
-		elif ast[0] == 'Scope':
-			Code += self.readTree(ast[3])
+		elif ast[0] == 'Parameters':
+			Code += self.readTree(ast[1]) + self.readTree(ast[2])
+
+		elif ast[0] == 'ParameterIncomplete':
+			if length == 3:
+				Code += self.readTree(ast[1]) + self.readTree(ast[2])
+			else:
+				Code += self.readTree(ast[1]) + ',' + self.readTree(ast[3])
+
+		elif ast[0] == 'text':
+			Code += self.readTree(ast[1]) + self.readTree(ast[2])
+
+		elif ast[0] == 'textincomplete':
+			Code += self.readTree(ast[1]) + ' ' + self.readTree(ast[2])
+
+		elif ast[0] == 'var':
+			Code += self.readTree(ast[1])
+
+		elif ast[0] == 'numberParam':
+			if length == 3:
+				Code += self.readTree(ast[1]) + self.readTree(ast[2])
+			elif length == 4:
+				Code += self.readTree(ast[1]) + self.readTree(ast[2]) + self.readTree(ast[3])
+			else:
+				Code += self.readTree(ast[1])
+
+		elif ast[0] == 'boolParam':
+			Code += self.readTree(ast[1])
+
+		elif ast[0] == 'condition':
+			Code += self.readTree(ast[1])
+
+		elif ast[0] == 'Pre_Scope':
+			Code += ''
+
+		elif ast[0] == 'expression':
+			Code += self.readTree(ast[1]) + self.readTree(ast[2]) + self.readTree(ast[3])
+
+		elif ast[0] == 'bool':
+			if length == 4:
+				Code += self.readTree(ast[1]) + self.readTree(ast[2]) + self.readTree(ast[3])
+			else:
+				Code += self.readTree(ast[1])
+
+		elif ast[0] == 'VAR':
+			Code += ast[1][1:] + ' '
+
+		elif ast[0] == 'NUMBER':
+			Code += str(ast[1])
 
 		else:
-			return " " + ast[0] + " "
-		print(Code)
+			return ast[1]
 		return Code
 
 	def ENCASO(self, ast, tablevel, parametro):
 		if type(ast) != tuple:
-			print(ast.__dict__)
 			ast = ast.value
 		length = len(ast)
 		Code = ''
-		print(ast)
 		if length <= 3:
 			Code += ("\t" * tablevel) + self.ENCASO(ast[1], tablevel, parametro)
 			Code += ("\t" * tablevel) + self.ENCASO(ast[2], tablevel, parametro)
@@ -217,6 +288,30 @@ class Compiler:
 if __name__ == '__main__':
 	comp = Compiler()
 	ast = comp.Parse(
-		'for @xyz to 15 Step 15{SET @mdd,15;};')
+
+		'''Def @MiRutina2 ()
+		{ Set @xy1, 4; }
+		Def @MiRutina (@dato1) 
+		 { println! ("Desde la rutina  ", @dato1 );
+		 Exec @MiRutina2();
+		 Set @Var1, 1;
+		for @Var1 to 10 Step 2
+		{ println! ("Valor: ", @Var1 ); }
+		 }
+		Def Principal () 
+		{
+		Set @Variable1, 5; # Variables globales
+		Set @xy1, 20;
+		Set @yx3, 15;
+		Set @variable, False;
+		Set @variable.NEG;
+		Exec @MiRutina(2);
+		Exec @MiRutina(@Variable1);
+		}''')
+
+	File = open("Rutina.py", "w")
+	comp.code += '\nPrincipal()'
+	File.write(comp.code)
+	File.close()
 	print('ast')
 	print(ast)
