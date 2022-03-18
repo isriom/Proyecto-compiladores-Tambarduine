@@ -1,9 +1,9 @@
-#from ply.yacc import yacc
-#from ply.lex import lex, LexToken
-#from ply.lex import TOKEN
-from libs.ply.yacc import yacc
-from libs.ply.lex import lex, LexToken
-from libs.ply.lex import TOKEN
+from ply.yacc import yacc
+from ply.lex import lex, LexToken
+from ply.lex import TOKEN
+#from libs.ply.yacc import yacc
+#from libs.ply.lex import lex, LexToken
+#from libs.ply.lex import TOKEN
 
 # LETRAS para hits y print !!!
 
@@ -110,6 +110,8 @@ def t_ID2(t):
 def t_ID(t):
 	r'[a-zA-Z_]+'
 	if t.value.upper() in keywords:
+		if t.value == 'Principal':
+			print('holi')
 		t.type = t.value.upper()
 		return t
 	elif t.value.upper() in booleanOps:
@@ -141,13 +143,11 @@ def t_VAR(t):
 
 
 
-
-
-
 # Build the lexer
 lexer = lex()
 
-data = '''>= <= = ==> ,{ SET println! If "textoprueba. @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
+
+data = '''>= <= = ==> ,{ Def Principal SET println! If "textoprueba. @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
 # data = '''3 + 5 * 10 - 20 '''
 # data = 'a = 3'
 # data = '1 + 5\nabce\n77\nif yo'
