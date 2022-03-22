@@ -1,3 +1,4 @@
+from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.Lexxer.Lex import *
 from src.ProjectParser.Parser import *
@@ -10,8 +11,8 @@ class Scope:
 		self.lexpos = t.lexpos
 		self.previous = None
 		self.toCheck = []
-		self.toCheckfor = []
-		self.toCheckcon = []
+		self.toCheckFor = []
+		self.toCheckConditions = []
 		self.code = ''
 
 		pass
@@ -57,11 +58,19 @@ class Compiler:
 		self.parser.Comp = self
 		self.tablevel = 0
 		self.Code = '\n'
+		self.status: tuple = ("Init complete",)
+		self.errors: str = ''
 
 	def Parse(self, text):
+		self.status = ("inited",)
+		self.errors = ''
 		parse = self.parser.parse(text, debug=True)
 		self.code = self.readTree(parse)
 		print(self.code)
+		if self.errors == '':
+			self.errors += 'No se han encontrado errores en el codigo'
+		self.status = ("Compilacion finalizada", 'Errores' + self.errors)
+
 		return parse
 
 	def GetCode(self):

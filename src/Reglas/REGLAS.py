@@ -699,7 +699,7 @@ def p_REGLA_95(p):
 	Scope = p.parser.Comp.CreateScope(T=p.stack[-1])
 	p.slice[0].scope = Scope
 
-	p[0] = (p.slice[0].type,)
+	p[0] = (p.slice[0].type)
 
 
 def p_REGLA_96(p):
