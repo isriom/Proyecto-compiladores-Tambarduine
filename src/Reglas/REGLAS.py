@@ -171,6 +171,7 @@ def p_REGLA_24(p):
 	forstatement : FOR VAR TO numberParam STEP numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2]))
+	p.slice[7].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
 
@@ -180,7 +181,7 @@ def p_REGLA_25(p):
 	forstatement : FOR var TO numberParam STEP numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2], 'foo'))
-
+	p.slice[7].scope.FOR = True
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
 
 
@@ -189,6 +190,7 @@ def p_REGLA_26(p):
 	forstatement : FOR VAR TO numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2]))
+	p.slice[7].scope.FOR = True
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 
@@ -198,6 +200,8 @@ def p_REGLA_27(p):
 	forstatement : FOR var TO numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2], 'foo'))
+	p.slice[7].scope.FOR = True
+
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 
 
@@ -226,6 +230,7 @@ def p_REGLA_31(p):
 	'''
 	defstatement : DEF VAR Parameters Scope
 	'''
+	p.slice[4].scope.insert(('PARAM',p[3]))
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
 
@@ -426,8 +431,8 @@ def p_REGLA_58(p):
 	'''
 	Scope : LSCOPE Pre_Scope instruction RSCOPE
 	'''
-	p.parser.Comp.CloseScope()
 	p.slice[0].scope = p.slice[2].scope
+	p.parser.Comp.CloseScope()
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
@@ -586,6 +591,9 @@ def p_REGLA_80(p):
 	p.slice[0].defined = p.parser.Comp.Gettype(p[1])
 	if p.slice[0].defined is None:
 		p.parser.Comp.insertCheck(('TYPEOF', p[1], p.slice[0]))
+
+
+
 	# p.slice[0].value = p.slice[1].value
 	p[0] = (p.slice[0].type, p.slice[1])
 
@@ -629,7 +637,7 @@ def p_REGLA_86(p):
 	'''
 	bool : numberParam condition numberParam
 	'''
-	p.parser.Comp.insertCheck(('CON', p.slice[1], p.slice[3]))
+	p.parser.Comp.insertCheck(('CON', p.slice[1], p.slice[3], p.slice[2]))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
@@ -638,7 +646,7 @@ def p_REGLA_87(p):
 	'''
 	bool : boolParam condition boolParam
 	'''
-	p.parser.Comp.insertCheck(('CON', p.slice[1], p.slice[3]))
+	p.parser.Comp.insertCheck(('CON', p.slice[1], p.slice[3], p.slice[2]))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 

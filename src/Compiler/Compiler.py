@@ -1,11 +1,10 @@
 from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
-from src.Lexxer.Lex import *
 from src.ProjectParser.Parser import *
 
 
 class Scope:
-	def __init__(self, t):
+	def __init__(self, t, comp):
 		self.variables = {}
 		self.lineno = t.lineno
 		self.lexpos = t.lexpos
@@ -14,7 +13,7 @@ class Scope:
 		self.toCheckFor = []
 		self.toCheckConditions = []
 		self.code = ''
-
+		self.comp = comp
 		pass
 
 	def SetLineno(self, t):
@@ -25,28 +24,137 @@ class Scope:
 		if not (t in self.variables):
 			return None
 		else:
-			return self.variables[t].TYPEOF
+			return self.variables[t]
 
 	def insert(self, t):
+		if t[0] == 'PARAM':
+			self.insertP(t[1])
+			return
 		if type(t[1]) == str:
-			self.variables[t[0]] = t[1]
+			self.variables[t[0][1].value] = t[1]
 		else:
-			tmpvalue = self.GetType(t[1].value)
+			tmpvalue = self.GetType(t[1].value[1].value)
 			if tmpvalue == None:
 				self.insertCheck(('ADJUST', t[0], t[1]))
-			self.variables[t[0]] = tmpvalue
+			elif tmpvalue != self.GetType(t[0][1].value):
+				self.insertCheck(('ADJUST', t[0], t[1]))
+			else:
+				self.variables[t[0]] = tmpvalue
+
+	def insertP(self, t):
+
+		if t[0] == 'var':
+			self.insert(((t[0], t[1]), 'PARAM'))
+		elif t[0] == 'ParameterIncomplete':
+			for i in t:
+				if type(i) == YaccSymbol:
+					self.insertP(i.value)
+
+		if t[1].type == 'ParameterIncomplete':
+			for i in t[1].value:
+				if type(i) == YaccSymbol:
+					self.insertP(i.value)
+			return
+		else:
+			return
 
 	def insertCheck(self, checkTuple):
 		if checkTuple[0] == 'CON' or checkTuple[0] == 'NUMBER':
-			self.toCheckcon.append(checkTuple)
+			self.toCheckConditions.append(checkTuple)
 		elif checkTuple[0] == 'FOR':
-			self.toCheckfor.append(checkTuple)
+			self.toCheckFor.append(checkTuple)
 		else:
 			self.toCheck.append(checkTuple)
 
 	def AddScope(self, scope):
 		self.previous = scope
 		pass
+
+	def Check(self):
+		error = '\n'
+		print(self.variables)
+		for i in self.toCheck:
+			if i[0] == 'ADJUST':
+				a = i[1][1].value
+				b = i[2].value[1].value
+				if self.GetType(a) == None:
+					self.variables[a] = self.GetType(b)
+					self.toCheck.remove(i)
+				else:
+					if self.GetType(a) == self.GetType(b):
+						self.toCheck.remove(i)
+					else:
+						error += 'var'
+
+			elif i[0] == 'TYPEOF':
+				vartype = self.GetType(i[1])
+				if vartype == None:
+					vartype = self.comp.Scopes['globalScope'].GetType(i[1])
+				i[2].defined = vartype
+				if i[2].defined == None:
+					error += 'variable' + i[1] + 'not declared before or a parameter use in line:' + str(
+						i[2].value[1].lineno)
+				self.toCheck.remove(i)
+
+			elif i[0] == 'NEG':
+				vartype = self.GetType(i[1][1].value)
+				if vartype == None:
+					vartype = self.comp.Scopes['globalScope'].GetType(i[1][1].value)
+				if (vartype == 'BOOL'):
+					self.toCheck.remove(i)
+				else:
+					error += 'Var: ' + i[1][1].value + ' is not a bolean. Line: ' + str(i[1][1].lineno)
+					self.toCheck.remove(i)
+
+			elif i[0] == 'T':
+				vartype = self.GetType(i[1][1].value)
+				if vartype == None:
+					vartype = self.comp.Scopes['globalScope'].GetType(i[1][1].value)
+				if (vartype == 'BOOL'):
+					self.toCheck.remove(i)
+				else:
+					error += 'Var: ' + i[1][1].value + ' is not a bolean. Line: ' + str(i[1][1].lineno)
+					self.toCheck.remove(i)
+
+			elif i[0] == 'F':
+				vartype = self.GetType(i[1][1].value)
+				if vartype == None:
+					vartype = self.comp.Scopes['globalScope'].GetType(i[1][1].value)
+				if (vartype == 'BOOL'):
+					self.toCheck.remove(i)
+				else:
+					error += 'Var: ' + i[1][1].value + ' is not a bolean. Line: ' + str(i[1][1].lineno)
+					self.toCheck.remove(i)
+
+		for i in self.toCheckConditions:
+			if i[0] == 'CON':
+				a = i[1].value[1]
+				a1 = i[1].value[1]
+				b = i[2].value[1]
+				b1 = i[2].value[1]
+				if type(a) == YaccSymbol:
+					a1 = a.value[1].value
+					a = a.defined
+				else:
+					a1 = a.type
+					a = a.type
+				if type(b) == YaccSymbol:
+					b1 = b.value[1].value
+					b = b.defined
+				else:
+					b1 = b.value
+					b = b.type
+				if a != b:
+					print(i)
+					condition = i[3].value[1]
+					error += 'Error in the condition: ' + str(a1)
+					error += condition.value + str(b1) + ' diferent types conditional' + ' in Line: ' + str(
+						condition.lineno)
+				print(i)
+				self.toCheckConditions.remove(i)
+		for i in self.toCheckFor:
+			pass
+		return error
 
 
 class Compiler:
@@ -62,13 +170,20 @@ class Compiler:
 		self.errors: str = ''
 
 	def Parse(self, text):
+		self.Scopes = {'actualScope': None, 'globalScope': None, 'all': []}
 		self.status = ("inited",)
 		self.errors = ''
 		parse = self.parser.parse(text, debug=True)
+
+		self.errors += self.Scopes['globalScope'].Check()
+		for scope in self.Scopes['all']:
+			self.errors += scope.Check()
+
 		self.code = self.readTree(parse)
-		print(self.code)
+
 		if self.errors == '':
 			self.errors += 'No se han encontrado errores en el codigo'
+
 		self.status = ("Compilacion finalizada", 'Errores' + self.errors)
 
 		return parse
@@ -96,7 +211,7 @@ class Compiler:
 		pass
 
 	def CreateScope(self, T):
-		new = Scope(T)
+		new = Scope(T, self)
 		if self.Scopes['actualScope'] != None:
 			self.Scopes['actualScope'].AddScope(new)
 		self.Scopes['all'].append(new)
@@ -295,29 +410,34 @@ class Compiler:
 
 
 if __name__ == '__main__':
+	# Possible correccion del error de working directory
+	# import sys, os
+	# os.chdir("../../")
+	# print(os.getcwd())
+
 	comp = Compiler()
 	ast = comp.Parse(
 
 		'''Def @MiRutina2 ()
 		{ Set @xy1, 4; }
-		Def @MiRutina (@dato1) 
+		Def @MiRutina (@dato1,15)
 		 { println! ("Desde la rutina  ", @dato1 );
 		 Exec @MiRutina2();
 		 Set @Var1, 1;
 		for @Var1 to 10 Step 2
 		{ println! ("Valor: ", @Var1 ); }
 		 }
-		Def Principal () 
+		Def Principal ()
 		{
 		Set @Variable1, 5; # Variables globales
 		Set @xy1, 20;
-		Set @yx3, 15;
-		Set @variable, False;
+		Set @yx3, True;
+		Set @variable, @yx3;
 		Set @variable.NEG;
 		Exec @MiRutina(2);
 		Exec @MiRutina(@Variable1);
 		}''')
-
+	print(comp.errors)
 	File = open("Rutina.py", "w")
 	comp.code += '\nPrincipal()'
 	File.write(comp.code)

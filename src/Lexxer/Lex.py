@@ -1,9 +1,9 @@
-from ply.yacc import yacc
-from ply.lex import lex, LexToken
-from ply.lex import TOKEN
-#from libs.ply.yacc import yacc
-#from libs.ply.lex import lex, LexToken
-#from libs.ply.lex import TOKEN
+# from ply.yacc import yacc
+# from ply.lex import lex, LexToken
+# from ply.lex import TOKEN
+from libs.ply.yacc import yacc
+from libs.ply.lex import lex, LexToken
+from libs.ply.lex import TOKEN
 
 # LETRAS para hits y print !!!
 

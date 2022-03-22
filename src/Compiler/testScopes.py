@@ -76,12 +76,8 @@ def Scopes():
 
 	print('END')
 	print(globalVars)
+	return globalVars
 
 
-Scopes()
-
-for i in data2:
-	if i == 'Principal':
-		print('funciona')
-		num += 1;
-		print(num)
+vars = Scopes()
+print(vars)

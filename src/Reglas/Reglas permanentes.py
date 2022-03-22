@@ -6,6 +6,7 @@ def p_REGLA_24(p):
 	'''
 	forstatement : FOR VAR TO numberParam STEP numberParam Scope
 	'''
+
 	p.parser.Comp.insertCheck(('FOR', p.slice[2]))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
