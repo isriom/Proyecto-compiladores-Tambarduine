@@ -1,6 +1,7 @@
 from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.ProjectParser.Parser import *
+from src.Compiler.testScopes import *
 
 
 class Scope:
@@ -12,8 +13,11 @@ class Scope:
 		self.toCheck = []
 		self.toCheckFor = []
 		self.toCheckConditions = []
+		self.toCheckAD = []
+		self.toCheckR = []
 		self.code = ''
 		self.comp = comp
+		self.gl = []
 		pass
 
 	def SetLineno(self, t):
@@ -63,8 +67,15 @@ class Scope:
 			self.toCheckConditions.append(checkTuple)
 		elif checkTuple[0] == 'FOR':
 			self.toCheckFor.append(checkTuple)
+		elif checkTuple[0] == 'ADJUST':
+			self.toCheckAD.append(checkTuple)
+		elif checkTuple[0] == 'Exec':
+			self.toCheckR.append(checkTuple)
 		else:
 			self.toCheck.append(checkTuple)
+
+	def RemoveCheck(self):
+		self.toCheck.pop()
 
 	def AddScope(self, scope):
 		self.previous = scope
@@ -73,26 +84,35 @@ class Scope:
 	def Check(self):
 		error = '\n'
 		print(self.variables)
-		for i in self.toCheck:
+		for i in self.toCheckAD:
 			if i[0] == 'ADJUST':
+				vartype = None
 				a = i[1][1].value
 				b = i[2].value[1].value
 				if self.GetType(a) == None:
-					self.variables[a] = self.GetType(b)
-					self.toCheck.remove(i)
+					if self.GetType(b) == None:
+						vartype = self.comp.Scopes['globalScope'].GetType(b)
+						self.variables[a] = vartype
+					else:
+						self.variables[a] = self.GetType(b)
+					self.toCheckAD.remove(i)
 				else:
 					if self.GetType(a) == self.GetType(b):
-						self.toCheck.remove(i)
+						self.toCheckAD.remove(i)
 					else:
 						error += 'var'
-
-			elif i[0] == 'TYPEOF':
+		for i in self.toCheck:
+			if i[0] == 'TYPEOF':
 				vartype = self.GetType(i[1])
 				if vartype == None:
 					vartype = self.comp.Scopes['globalScope'].GetType(i[1])
+					if vartype != None:
+						i[2].globalvar = True
+						self.gl.append(i[1])
 				i[2].defined = vartype
+				self.variables[i[1]] = vartype
 				if i[2].defined == None:
-					error += 'variable' + i[1] + 'not declared before or a parameter use in line:' + str(
+					error += 'variable ' + i[1] + ' not declared before or a parameter use in line:' + str(
 						i[2].value[1].lineno)
 				self.toCheck.remove(i)
 
@@ -125,7 +145,6 @@ class Scope:
 				else:
 					error += 'Var: ' + i[1][1].value + ' is not a bolean. Line: ' + str(i[1][1].lineno)
 					self.toCheck.remove(i)
-
 		for i in self.toCheckConditions:
 			if i[0] == 'CON':
 				a = i[1].value[1]
@@ -145,6 +164,9 @@ class Scope:
 					b1 = b.value
 					b = b.type
 				if a != b:
+					if a == 'PARAM' or b == 'PARAM':
+						self.toCheckConditions.remove(i)
+						continue
 					print(i)
 					condition = i[3].value[1]
 					error += 'Error in the condition: ' + str(a1)
@@ -153,6 +175,27 @@ class Scope:
 				print(i)
 				self.toCheckConditions.remove(i)
 		for i in self.toCheckFor:
+			vartype = self.GetType(i[1].value[1].value)
+			if vartype == None:
+
+				vartype = self.comp.Scopes['globalScope'].GetType(i[1].value[1].value)
+				if vartype == None:
+					i[1].defined = i[0]
+					self.variables[i[1].value[1].value] = i[0]
+			self.toCheckFor.remove(i)
+
+			pass
+		for i in self.toCheckR:
+			rcuantity = self.comp.Scopes['Rutinas'].GetType(i[1])
+			if rcuantity == None:
+				error += 'Erorr en linea ' + str(i[2].value[2].lineno) + '. Rutina ' + i[
+					1] + ' no se encuentra declarada.'
+			if rcuantity == str(i[2].number):
+				self.toCheckR.remove(i)
+			else:
+				error += 'Erorr en linea ' + str(i[2].value[2].lineno) + '. Rutina ' + i[1] + ' recibe ' + str(
+					rcuantity) + ' parametros, pero ' + str(i[2].number) + ' fueron entregados\n'
+
 			pass
 		return error
 
@@ -160,17 +203,26 @@ class Scope:
 class Compiler:
 
 	def __init__(self):
-		self.Scopes = {'actualScope': None, 'globalScope': None, 'all': []}
+		abstracT = LexToken
+		abstracT.lineno = 0
+		abstracT.lexpos = 0
+		self.Scopes = {'actualScope': Scope(abstracT, self), 'globalScope': None, 'all': []}
 		self.lexer = GetLexer()
 		self.parser = GetParser()
 		self.parser.Comp = self
 		self.tablevel = 0
-		self.Code = '\n'
+		self.code = '\n'
 		self.status: tuple = ("Init complete",)
 		self.errors: str = ''
 
 	def Parse(self, text):
-		self.Scopes = {'actualScope': None, 'globalScope': None, 'all': []}
+		gl = globals(text)
+		abstracT = LexToken
+		abstracT.lineno = 0
+		abstracT.lexpos = 0
+		DEFSCOPE = Scope(abstracT, self)
+
+		self.Scopes = {'actualScope': DEFSCOPE, 'globalScope': None, 'all': [], 'Rutinas': DEFSCOPE}
 		self.status = ("inited",)
 		self.errors = ''
 		parse = self.parser.parse(text, debug=True)
@@ -178,8 +230,10 @@ class Compiler:
 		self.errors += self.Scopes['globalScope'].Check()
 		for scope in self.Scopes['all']:
 			self.errors += scope.Check()
-
-		self.code = self.readTree(parse)
+		self.Scopes['globalScope'].gl = gl
+		for i in gl:
+			self.code += 'global ' + i[1:] + '\n'
+		self.code += self.readTree(parse)
 
 		if self.errors == '':
 			self.errors += 'No se han encontrado errores en el codigo'
@@ -203,6 +257,9 @@ class Compiler:
 	def insertCheck(self, checkTuple):
 		self.Scopes['actualScope'].insertCheck(checkTuple)
 
+	def RemoveCheck(self):
+		self.Scopes['actualScope'].RemoveCheck()
+
 	def AddGlobal(self, Scope):
 		if self.Scopes['globalScope'] != None:
 			raise SyntaxError
@@ -212,8 +269,7 @@ class Compiler:
 
 	def CreateScope(self, T):
 		new = Scope(T, self)
-		if self.Scopes['actualScope'] != None:
-			self.Scopes['actualScope'].AddScope(new)
+		new.AddScope(self.Scopes['actualScope'])
 		self.Scopes['all'].append(new)
 		self.Scopes['actualScope'] = new
 		return new
@@ -253,7 +309,8 @@ class Compiler:
 			Code += ("\t" * tablevel) + self.readTree(ast[3], tablevel + 1)
 
 		elif ast[0] == 'forstatement':  # need a refactor
-			if ast[2].defined == 'FOR' or ast[2].defined == None:
+			vartype = ast[7].scope.previous.GetType(ast[2].value[1].value)
+			if vartype == 'FOR' or vartype == None:
 				Code += ("\t" * tablevel) + "for " + self.readTree(ast[2]) + 'in range( 1,' + self.readTree(ast[4])
 			else:
 				Code += ("\t" * tablevel) + "for " + self.readTree(ast[2]) + ' in range(' + self.readTree(
@@ -319,12 +376,15 @@ class Compiler:
 			Code += ("\t" * tablevel) + 'Pandereta.percutor(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'typeestatement':
+
 			Code += ("\t" * tablevel) + 'type(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'expressionestatement':
 			Code += ("\t" * tablevel) + self.readTree(ast[1])
 
 		elif ast[0] == 'Scope':
+			for gl in ast[2].scope.gl:
+				Code += ("\t" * tablevel) + 'global ' + gl[1:] + '\n'
 			Code += self.readTree(ast[3], tablevel)
 
 		elif ast[0] == 'whenestatement':
@@ -418,12 +478,15 @@ if __name__ == '__main__':
 	comp = Compiler()
 	ast = comp.Parse(
 
-		'''Def @MiRutina2 ()
-		{ Set @xy1, 4; }
-		Def @MiRutina (@dato1,15)
+		'''
+		Def @MiRutina2 (@abc)
+		{ Set @xy1, 4;
+		 Set @xy2, 4;
+		 }
+		Def @MiRutina (@dato1,@x15)
 		 { println! ("Desde la rutina  ", @dato1 );
-		 Exec @MiRutina2();
-		 Set @Var1, 1;
+		 Exec @MiRutina2(1);
+		 Set @Var1, @xy1;
 		for @Var1 to 10 Step 2
 		{ println! ("Valor: ", @Var1 ); }
 		 }
@@ -432,10 +495,10 @@ if __name__ == '__main__':
 		Set @Variable1, 5; # Variables globales
 		Set @xy1, 20;
 		Set @yx3, True;
-		Set @variable, @yx3;
+		Set @variable, True;
 		Set @variable.NEG;
-		Exec @MiRutina(2);
-		Exec @MiRutina(@Variable1);
+		Exec @MiRutina(2,3);
+		Exec @MiRutina(@Variable1,4);
 		}''')
 	print(comp.errors)
 	File = open("Rutina.py", "w")

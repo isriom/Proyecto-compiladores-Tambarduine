@@ -181,7 +181,8 @@ def p_REGLA_25(p):
 	forstatement : FOR var TO numberParam STEP numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2], 'foo'))
-	p.slice[7].scope.FOR = True
+	p.slice[7].scope.insert((p[2], 'NUMBER'))
+
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
 
 
@@ -190,7 +191,7 @@ def p_REGLA_26(p):
 	forstatement : FOR VAR TO numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2]))
-	p.slice[7].scope.FOR = True
+	p.slice[5].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 
@@ -200,7 +201,7 @@ def p_REGLA_27(p):
 	forstatement : FOR var TO numberParam Scope
 	'''
 	p.parser.Comp.insertCheck(('FOR', p.slice[2], 'foo'))
-	p.slice[7].scope.FOR = True
+	p.slice[5].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 
@@ -230,9 +231,14 @@ def p_REGLA_31(p):
 	'''
 	defstatement : DEF VAR Parameters Scope
 	'''
-	p.slice[4].scope.insert(('PARAM',p[3]))
+	for i in range(1, p.slice[3].vars):
+		p.parser.Comp.RemoveCheck()
+	p.slice[4].scope.insert(('PARAM', p[3]))
+	p.parser.Comp.Insert((('def', p.slice[2]), str(p.slice[3].number)))
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
+
+# Var1 ,x15
 
 def p_REGLA_32(p):
 	'''
@@ -247,6 +253,7 @@ def p_REGLA_33(p):
 	excecstatement : EXEC VAR Parameters
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
+	p.parser.Comp.insertCheck((p[1], p[2], p.slice[3]))
 
 
 def p_REGLA_34(p):
@@ -497,13 +504,17 @@ def p_REGLA_67(p):
 	'''
 	Parameters : ParameterIncomplete RPAREN
 	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+	p.slice[0].vars = p.slice[1].vars
+	p.slice[0].number = p.slice[1].number
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[1].number)
 
 
 def p_REGLA_68(p):
 	'''
 	Parameters : LPAREN RPAREN
 	'''
+	p.slice[0].vars = 0
+	p.slice[0].number = 0
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
@@ -511,6 +522,8 @@ def p_REGLA_69(p):
 	'''
 	ParameterIncomplete : ParameterIncomplete COMMA numberParam
 	'''
+	p.slice[0].vars = p.slice[1].vars
+	p.slice[0].number = p.slice[1].number + 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
@@ -518,13 +531,18 @@ def p_REGLA_70(p):
 	'''
 	ParameterIncomplete : ParameterIncomplete COMMA var
 	'''
+	p.slice[0].vars = p.slice[1].vars + 1
+	p.slice[0].number = p.slice[1].number + 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
+	pass
 
 
 def p_REGLA_71(p):
 	'''
 	ParameterIncomplete : ParameterIncomplete COMMA boolParam
 	'''
+	p.slice[0].vars = p.slice[1].vars
+	p.slice[0].number = p.slice[1].number + 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
@@ -532,6 +550,7 @@ def p_REGLA_72(p):
 	'''
 	ParameterIncomplete : ParameterIncomplete COMMA text
 	'''
+	p.slice[0].number = p.slice[1].number + 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
@@ -560,6 +579,8 @@ def p_REGLA_76(p):
 	'''
 	ParameterIncomplete : LPAREN numberParam
 	'''
+	p.slice[0].vars = 0
+	p.slice[0].number = 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
@@ -567,6 +588,8 @@ def p_REGLA_77(p):
 	'''
 	ParameterIncomplete : LPAREN var
 	'''
+	p.slice[0].vars = 1
+	p.slice[0].number = 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
@@ -574,6 +597,8 @@ def p_REGLA_78(p):
 	'''
 	ParameterIncomplete : LPAREN boolParam
 	'''
+	p.slice[0].vars = 0
+	p.slice[0].number = 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
@@ -581,6 +606,8 @@ def p_REGLA_79(p):
 	'''
 	ParameterIncomplete : LPAREN text
 	'''
+	p.slice[0].vars = 0
+	p.slice[0].number = 1
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
@@ -589,13 +616,14 @@ def p_REGLA_80(p):
 	var : VAR
 	'''
 	p.slice[0].defined = p.parser.Comp.Gettype(p[1])
+	p.slice[0].globalvar = False
+
 	if p.slice[0].defined is None:
+		tupletmp = ('TYPEOF', p[1], p.slice[0])
 		p.parser.Comp.insertCheck(('TYPEOF', p[1], p.slice[0]))
 
-
-
 	# p.slice[0].value = p.slice[1].value
-	p[0] = (p.slice[0].type, p.slice[1])
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[0])
 
 
 def p_REGLA_81(p):

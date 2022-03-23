@@ -1,10 +1,3 @@
-data = '''>= <= = ==> ,{ SET println! If "textoprueba. @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
-data2 = ' {}   { {} {} } Principal {  SET @abc SET @var2 SET @var3; SET @var4 , @abs+@var5{ {}  { } } }'
-
-print(data2.find('Principal'))
-num = 0;
-
-
 class Var:
 
 	def __init__(self, name, scope):
@@ -24,11 +17,8 @@ class Var:
 		return self.scope
 
 
-globalVars = []
-
-
-def Scopes():
-	global globalVars
+def globals(data):
+	globalVars = []
 	# print(data2[0:0+2])
 	# print ('iiiii')
 	newGlobal = False
@@ -36,24 +26,28 @@ def Scopes():
 	scopeNum = -1
 	totalScopes = -1
 	# Entradas Salidas
-	if 'Principal' in data2:
-		print('Principal' in data2)
-		MainPos = data2.find('Principal')
-		for i in range(MainPos, len(data2) - 1):
+	if 'Principal' in data:
+		print('Principal' in data)
+		MainPos = data.find('Principal')
+		for i in range(MainPos, len(data) - 1):
 			# print (data2[i:i+3])
-			if data2[i:i + 3] == "SET" and scopeNum == 0:
-				for j in range(i + 3, len(data2) - 1):  # acordarme del brake
-					if data2[j] == "@":
+			if data[i:i + 3] == "Set" and scopeNum == 0:
+				for j in range(i + 3, len(data) - 1):  # acordarme del brake
+					if data[j] == "@":
 						varName += "@"
-						for k in range(j + 1, len(data2) - 1):
-							if data2[k] == " " or data2[k] == ",":
+						for k in range(j + 1, len(data) - 1):
+							if data[k] == " " or data[k] == "," or data[k] == '.':
+								if varName in globalVars:
+									varName = ""
+									newGlobal = True
+									break
 								globalVars.append(varName)
 								print(globalVars)
 								varName = ""
 								newGlobal = True
 								break
 							else:
-								varName += data2[k]
+								varName += data[k]
 								print('VARNAME = ' + varName)
 					elif newGlobal == True:
 						newGlobal = False
@@ -62,13 +56,13 @@ def Scopes():
 			# Error no asigna la variable correctamente
 			# break
 
-			if data2[i] == '{':
+			if data[i] == '{':
 				totalScopes += 1
 				scopeNum += 1
 
 				print(totalScopes)  ####
 
-			if data2[i] == '}':
+			if data[i] == '}':
 				totalScopes = scopeNum
 				scopeNum -= 1
 
@@ -77,7 +71,3 @@ def Scopes():
 	print('END')
 	print(globalVars)
 	return globalVars
-
-
-vars = Scopes()
-print(vars)
