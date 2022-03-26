@@ -28,12 +28,13 @@ def p_error(p):
 	if p == None:
 		print("end of file reached, Parsed finished or most probabily Syntax error at the end of file")
 	else:
+		parser.error += '\n' + f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}'
 		print(f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}')
 
 
 # Build the parser
 parser = yacc(debug=True)
-
+parser.error=''
 
 # ast = parser.parse('if True {SET @xyz,5;} else {SET @xyz,5;};', debug=True)
 # print(ast)

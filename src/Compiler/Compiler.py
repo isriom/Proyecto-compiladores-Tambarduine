@@ -34,6 +34,8 @@ class Scope:
 		if t[0] == 'PARAM':
 			self.insertP(t[1])
 			return
+		elif t[1] == 'bool' and (not t[0][1].value in self.variables):
+			t = (t[0], 'BOOL')
 		if type(t[1]) == str:
 			self.variables[t[0][1].value] = t[1]
 		else:
@@ -82,7 +84,7 @@ class Scope:
 		pass
 
 	def Check(self):
-		error = '\n'
+		error = ''
 		print(self.variables)
 		for i in self.toCheckAD:
 			if i[0] == 'ADJUST':
@@ -100,7 +102,8 @@ class Scope:
 					if self.GetType(a) == self.GetType(b):
 						self.toCheckAD.remove(i)
 					else:
-						error += 'var'
+						error += 'la Variable ' + a + ' y la variable ' + b + ' son diferentes tipos y no pueden ser asignados, Linea' + \
+						         i[2].lineno
 		for i in self.toCheck:
 			if i[0] == 'TYPEOF':
 				vartype = self.GetType(i[1])
@@ -112,8 +115,12 @@ class Scope:
 				i[2].defined = vartype
 				self.variables[i[1]] = vartype
 				if i[2].defined == None:
-					error += 'variable ' + i[1] + ' not declared before or a parameter use in line:' + str(
-						i[2].value[1].lineno)
+					for For in self.toCheckFor:
+						if i[1] == For[1].value[1].value:
+							i[2].defined = 'FOR'
+				if i[2].defined == None:
+					error += 'La variable ' + i[1] + ' No se encuentra definida. Linea:' + str(
+						i[2].value[1].lineno) + ' Indice: ' + str(i[2].value[1].lexpos)
 				self.toCheck.remove(i)
 
 			elif i[0] == 'NEG':
@@ -151,7 +158,12 @@ class Scope:
 				a1 = i[1].value[1]
 				b = i[2].value[1]
 				b1 = i[2].value[1]
+
+				if a.type == 'expression' or b.type=='expression':
+					self.toCheckConditions.remove(i)
+					continue
 				if type(a) == YaccSymbol:
+
 					a1 = a.value[1].value
 					a = a.defined
 				else:
@@ -211,7 +223,7 @@ class Compiler:
 		self.parser = GetParser()
 		self.parser.Comp = self
 		self.tablevel = 0
-		self.code = '\n'
+		self.code = ''
 		self.status: tuple = ("Init complete",)
 		self.errors: str = ''
 
@@ -221,12 +233,19 @@ class Compiler:
 		abstracT.lineno = 0
 		abstracT.lexpos = 0
 		DEFSCOPE = Scope(abstracT, self)
-
+		self.lexer.error = ''
+		self.parser.error = ''
 		self.Scopes = {'actualScope': DEFSCOPE, 'globalScope': None, 'all': [], 'Rutinas': DEFSCOPE}
 		self.status = ("inited",)
 		self.errors = ''
-		parse = self.parser.parse(text, debug=True)
 
+		parse = self.parser.parse(text, debug=True, lexer=self.lexer)
+		self.errors += self.lexer.error
+		self.errors += self.parser.error
+
+		if self.errors != '':
+			self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+			return parse
 		self.errors += self.Scopes['globalScope'].Check()
 		for scope in self.Scopes['all']:
 			self.errors += scope.Check()
@@ -234,12 +253,12 @@ class Compiler:
 		for i in gl:
 			self.code += 'global ' + i[1:] + '\n'
 		self.code += self.readTree(parse)
-
+		self.errors += self.lexer.error
 		if self.errors == '':
 			self.errors += 'No se han encontrado errores en el codigo'
 
-		self.status = ("Compilacion finalizada", 'Errores' + self.errors)
-
+		self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+		print(self.status)
 		return parse
 
 	def GetCode(self):
@@ -309,7 +328,11 @@ class Compiler:
 			Code += ("\t" * tablevel) + self.readTree(ast[3], tablevel + 1)
 
 		elif ast[0] == 'forstatement':  # need a refactor
-			vartype = ast[7].scope.previous.GetType(ast[2].value[1].value)
+			if len(ast) >= 7:
+				vartype = ast[7].scope.previous.GetType(ast[2].value[1].value)
+			else:
+				vartype = ast[5].scope.previous.GetType(ast[2].value[1].value)
+
 			if vartype == 'FOR' or vartype == None:
 				Code += ("\t" * tablevel) + "for " + self.readTree(ast[2]) + 'in range( 1,' + self.readTree(ast[4])
 			else:

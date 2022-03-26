@@ -22,10 +22,11 @@ letters = (
 
 # List of token names.   This is always required
 tokens = (
-	         'KEYWORD', 'LETTERS', 'NAME','TEXT', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
+	         'KEYWORD', 'LETTERS', 'NAME', 'TEXT', 'BOOLEANOP', 'BOOLEAN', 'HIT', 'PRINT', 'FINCASO', 'ID',
 	         'ID2', 'VAR', 'DOT', 'LESSEQUAL', 'GREATEEQUAL', 'LESS', 'GREAT', 'EQUALEQUAL', 'EQUAL', 'DIFFERENT',
 	         'NUMBER', 'PLUS', 'MINUS', 'POWER', 'TIMES', 'INTDIVIDE', 'DIVIDE', 'MODULUS',
-	         'LSCOPE', 'RSCOPE', 'QUOTES', 'LPAREN', 'RPAREN', 'COMMA', 'ENDLINE') + keywords + booleanOps + hits + letters
+	         'LSCOPE', 'RSCOPE', 'QUOTES', 'LPAREN', 'RPAREN', 'COMMA',
+	         'ENDLINE') + keywords + booleanOps + hits + letters
 
 # Regular expression rules for simple tokens
 t_LSCOPE = r'\{'
@@ -65,6 +66,9 @@ t_ignore_COMMENT = r'\#.*'
 
 ###################################### ERROR
 def t_error(t):
+	global lexer
+
+	lexer.error += '\n' + "Illegal character " + str(t.value[0]) + 'in line ' + str(t.lineno)
 	print("Illegal character '%s'" % t.value[0])
 	t.lexer.skip(1)
 
@@ -107,6 +111,7 @@ def t_ID2(t):
         t_error(t)
 '''
 
+
 def t_ID(t):
 	r'[a-zA-Z_]+'
 	if t.value.upper() in keywords:
@@ -141,11 +146,9 @@ def t_VAR(t):
 	return t
 
 
-
-
 # Build the lexer
 lexer = lex()
-
+lexer.error = ''
 
 data = '''>= <= = ==> ,{ Def Principal SET println! If "textoprueba. @Aqqaae @var26_? type() < .Neg Abanico() ; //% ** 10 -20 AB *2\n True False Fin-EnCaso'''
 # data = '''3 + 5 * 10 - 20 '''
@@ -153,13 +156,13 @@ data = '''>= <= = ==> ,{ Def Principal SET println! If "textoprueba. @Aqqaae @va
 # data = '1 + 5\nabce\n77\nif yo'
 
 # Give the lexer some input
-lexer.input(data)
+# lexer.input(data)
 
 # Tokenize
-for tok in lexer:
-	# print(tok)
-	print("Class:" + tok.type + " Value:" + str(tok.value) + " Line:" + str(tok.lineno) + " Pos:" + str(tok.lexpos))
-
+# for tok in lexer:
+# 	# print(tok)
+# 	print("Class:" + tok.type + " Value:" + str(tok.value) + " Line:" + str(tok.lineno) + " Pos:" + str(tok.lexpos))
+#
 
 #
 
