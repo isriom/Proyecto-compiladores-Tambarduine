@@ -2,6 +2,7 @@ from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.ProjectParser.Parser import *
 from src.Compiler.testScopes import *
+# from src.Tambourine.TambourineDriver import *
 
 
 class Scope:
@@ -159,7 +160,7 @@ class Scope:
 				b = i[2].value[1]
 				b1 = i[2].value[1]
 
-				if a.type == 'expression' or b.type=='expression':
+				if a.type == 'expression' or b.type == 'expression':
 					self.toCheckConditions.remove(i)
 					continue
 				if type(a) == YaccSymbol:
@@ -238,6 +239,7 @@ class Compiler:
 		self.Scopes = {'actualScope': DEFSCOPE, 'globalScope': None, 'all': [], 'Rutinas': DEFSCOPE}
 		self.status = ("inited",)
 		self.errors = ''
+		self.code = 'from src.Tambourine.TambourineDriver import *\n'
 
 		parse = self.parser.parse(text, debug=True, lexer=self.lexer)
 		self.errors += self.lexer.error
@@ -259,6 +261,11 @@ class Compiler:
 
 		self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
 		print(self.status)
+		self.code += 'def main():\n' \
+		             '\tglobal Tambourdine\n' \
+		             '\tTambourdine=TambourineDriver()\n' \
+		             '\tPrincipal()\n' \
+		             'main()'
 		return parse
 
 	def GetCode(self):
@@ -368,7 +375,7 @@ class Compiler:
 			Code += ("\t" * tablevel) + 'print' + self.readTree(ast[2]) + "\n"
 
 		elif ast[0] == 'metronomostatement':
-			Code += ("\t" * tablevel) + 'Pandereta.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
+			Code += ("\t" * tablevel) + 'Tambourdine.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
 				ast[5]) + ")\n"
 
 		elif ast[0] == 'declarationstatement':
@@ -384,19 +391,19 @@ class Compiler:
 			Code += ("\t" * tablevel) + self.readTree(ast[2]) + '=False ' + "\n"
 
 		elif ast[0] == 'abanicostatement':
-			Code += ("\t" * tablevel) + 'Pandereta.abanico(' + self.readTree(ast[3]) + ")\n"
+			Code += ("\t" * tablevel) + 'Tambourdine.abanico(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'verticalstatement':
-			Code += ("\t" * tablevel) + 'Pandereta.vertical(' + self.readTree(ast[3]) + ")\n"
+			Code += ("\t" * tablevel) + 'Tambourdine.vertical(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'percutorstatement':
-			Code += ("\t" * tablevel) + 'Pandereta.percutor(' + self.readTree(ast[3]) + ")\n"
+			Code += ("\t" * tablevel) + 'Tambourdine.percutor(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'golpestatement':
-			Code += ("\t" * tablevel) + "Pandereta.golpe()\n"
+			Code += ("\t" * tablevel) + "Tambourdine.golpe()\n"
 
 		elif ast[0] == 'vribatoestatement':
-			Code += ("\t" * tablevel) + 'Pandereta.percutor(' + self.readTree(ast[3]) + ")\n"
+			Code += ("\t" * tablevel) + 'Tambourdine.percutor(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'typeestatement':
 
@@ -510,13 +517,14 @@ if __name__ == '__main__':
 		 { println! ("Desde la rutina  ", @dato1 );
 		 Exec @MiRutina2(1);
 		 Set @Var1, @xy1;
+		 Golpe();
 		for @Var1 to 10 Step 2
-		{ println! ("Valor: ", @Var1 ); }
+		{ println! ("Valor ", @Var1 ); }
 		 }
 		Def Principal ()
 		{
 		Set @Variable1, 5; # Variables globales
-		Set @xy1, 20;
+		Set @xy1, 2;
 		Set @yx3, True;
 		Set @variable, True;
 		Set @variable.NEG;
@@ -525,8 +533,7 @@ if __name__ == '__main__':
 		}''')
 	print(comp.errors)
 	File = open("Rutina.py", "w")
-	comp.code += '\nPrincipal()'
 	File.write(comp.code)
 	File.close()
-	print('ast')
+	print('ast:\n')
 	print(ast)
