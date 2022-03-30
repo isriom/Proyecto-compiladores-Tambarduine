@@ -2,6 +2,8 @@ from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.ProjectParser.Parser import *
 from src.Compiler.testScopes import *
+
+
 # from src.Tambourine.TambourineDriver import *
 
 
@@ -103,7 +105,7 @@ class Scope:
 					if self.GetType(a) == self.GetType(b):
 						self.toCheckAD.remove(i)
 					else:
-						error += 'la Variable ' + a + ' y la variable ' + b + ' son diferentes tipos y no pueden ser asignados, Linea' + \
+						error += 'la Variable ' + a + ' y la variable ' + b + ' son diferentes tipos y no pueden ser asignados, Linea ' + \
 						         i[2].lineno
 		for i in self.toCheck:
 			if i[0] == 'TYPEOF':
@@ -121,7 +123,7 @@ class Scope:
 							i[2].defined = 'FOR'
 				if i[2].defined == None:
 					error += 'La variable ' + i[1] + ' No se encuentra definida. Linea:' + str(
-						i[2].value[1].lineno) + ' Indice: ' + str(i[2].value[1].lexpos)
+						i[2].value[1].lineno) + ' Indice: ' + str(i[2].value[1].lexpos) + '\n'
 				self.toCheck.remove(i)
 
 			elif i[0] == 'NEG':
@@ -243,11 +245,18 @@ class Compiler:
 
 		parse = self.parser.parse(text, debug=True, lexer=self.lexer)
 		self.errors += self.lexer.error
+		print("self.errors")
+		print(self.errors)
 		self.errors += self.parser.error
+		print(self.errors)
 
 		if self.errors != '':
 			self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
 			return parse
+		if self.Scopes['globalScope'] == None:
+			self.errors += "Error detectando la funcion Principal"
+			self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+			return
 		self.errors += self.Scopes['globalScope'].Check()
 		for scope in self.Scopes['all']:
 			self.errors += scope.Check()
@@ -502,6 +511,7 @@ class Compiler:
 if __name__ == '__main__':
 	# Possible correccion del error de working directory
 	# import sys, os
+	# print(os.getcwd())
 	# os.chdir("../../")
 	# print(os.getcwd())
 

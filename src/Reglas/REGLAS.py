@@ -514,6 +514,7 @@ def p_REGLA_68(p):
 	'''
 	Parameters : LPAREN RPAREN
 	'''
+	
 	p.slice[0].vars = 0
 	p.slice[0].number = 0
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])

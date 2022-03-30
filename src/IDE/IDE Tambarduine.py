@@ -218,6 +218,7 @@ class Window:
 		self.scan()
 
 	def display(self):
+		self.printwindow.delete("1.0", tk.END)
 		self.printwindow.insert("1.0", "Compilando")
 		self.Compiler.Parse(self.T1.get("1.0", "end"))
 		self.printwindow.insert("2.0", "\n")
@@ -225,6 +226,7 @@ class Window:
 		# self.printwindow.insert("6.0", self.T1.get("1.0", "end"))
 		self.printwindow.insert("7.0", "\n")
 		print(self.T1.get("1.0", "end"))
+		self.Compiler.lexer.lineno = 0
 
 	def clear(self):
 		self.T1.delete("1.0", "end")

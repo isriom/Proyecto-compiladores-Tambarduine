@@ -28,8 +28,10 @@ def p_error(p):
 	if p == None:
 		print("end of file reached, Parsed finished or most probabily Syntax error at the end of file")
 	else:
-		parser.error += '\n' + f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}'
+		parser.error += '\n'
+		parser.error += f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}'
 		print(f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}')
+		print(parser.error)
 
 
 # Build the parser
