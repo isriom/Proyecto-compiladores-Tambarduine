@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+from tkinter.messagebox import *
 from collections import deque
 import os
 from src.Compiler.Compiler import Compiler
@@ -52,9 +53,6 @@ class Window:
 		self.stack = deque(maxlen=10)
 		self.stackcursor = 0
 
-		# self.L1 = Label(self.mast, text = "IDE Tambarduine") #Etiqueta del titulo
-		# self.L1.pack(padx = 5, pady = 5)
-
 		# ---------
 
 		self.T1 = Text(self.master, width=66, height=20)  # Cuadro de entrada de texto del IDE
@@ -88,6 +86,8 @@ class Window:
 		self.menu = Menu(self.master)
 		self.menu.add_command(label="Undo", command=self.undo)
 		self.menu.add_command(label="Redo", command=self.redo)
+		self.menu.add_command(label="Save File", command=self.FileNameS)
+		self.menu.add_command(label="Open File", command=self.FileNameL)
 
 		self.master.config(menu=self.menu)
 
@@ -247,6 +247,76 @@ class Window:
 			self.clear()
 			if self.stackcursor < 9: self.stackcursor += 1
 			self.T1.insert("0.0", self.stack[self.stackcursor])
+
+
+	def FileNameS(self):
+		self.winS= Tk()
+		self.winS.title("Save File")
+		self.winS.geometry("300x150")
+		self.winS.resizable(False, False)
+		NameL= Label(self.winS, text="Ingrese el nombre del archivo")
+		NameL.pack()
+		self.NameFileS = Entry(self.winS)
+		self.NameFileS.place(x=20,y=40)
+		BName = Button(self.winS, text="Save", command= self.ObtenerNameS)
+		BName.place(x=150,y=100)
+
+	def FileNameL(self):
+		self.winL= Tk()
+		self.winL.title("Load File")
+		self.winL.geometry("300x150")
+		self.winL.resizable(False, False)
+		NameL= Label(self.winL, width=30, height=2, text="Ingrese el nombre del archivo")
+		NameL.pack()
+		self.NameFileS = Entry(self.winL)
+		self.NameFileS.place(x=20,y=40)
+		BName = Button(self.winL, text="Load", command= self.ObtenerNameL)
+		BName.place(x=150,y=100)
+		self.winL.mainloop()
+
+
+	def ObtenerNameS(self):
+		fileName=self.NameFileS.get()
+		path=fileName+".txt"
+		if fileName!="":
+			print(path)
+			self.SaveCode(path)
+			self.winS.destroy()
+		else:
+			showerror("Error",
+            "No se ha escrito el nombre del archivo")
+
+		
+
+	def ObtenerNameL(self):
+		fileName=self.NameFileS.get()
+		path=fileName+".txt"
+		if fileName!="":
+			print(path)
+			self.LoadCode(path)
+			self.winL.destroy()
+		else:
+			showerror("Error",
+            "No se ha escrito el nombre del archivo")
+
+	def LoadCode(self,FName):
+		path= FName
+		print(path)
+		file=open(path)#abrir
+		content=file.readlines()#lectura de las lineas
+		print(content)
+		self.T1.insert("0.0",content)
+		file.close()#cerrar
+		return content
+
+	def SaveCode(self,FName):
+		path= FName
+		print(path)
+		#with open(path,'r+') as f:
+			#f.truncate(0)
+		file=open(path,"a") #a->append
+		file.write(self.T1.get("1.0", "end - 1c")+"\n") # escribe el dato en el file
+		file.close()
 
 	def print_stack(self):
 		i = 0
