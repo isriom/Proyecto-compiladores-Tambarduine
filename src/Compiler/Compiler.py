@@ -2,8 +2,6 @@ from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.ProjectParser.Parser import *
 from src.Compiler.testScopes import *
-
-
 # from src.Tambourine.TambourineDriver import *
 
 
