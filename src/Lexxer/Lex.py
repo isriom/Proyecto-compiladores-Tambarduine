@@ -113,10 +113,8 @@ def t_ID2(t):
 
 
 def t_ID(t):
-	r'[a-zA-Z_]+'
+	r'[a-zA-Z_]+|\:|\\n'
 	if t.value.upper() in keywords:
-		if t.value == 'Principal':
-			print('holi')
 		t.type = t.value.upper()
 		return t
 	elif t.value.upper() in booleanOps:

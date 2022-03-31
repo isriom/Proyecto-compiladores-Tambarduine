@@ -46,6 +46,7 @@ class LineNumbers(tk.Text):  # Clase para que se vea numeros al margen
 
 class Window:
 	def __init__(self, master):
+		self.rutina = ''
 		self.master = master
 		self.master.option_add("*Font", "Verdana 11")  # Letra
 
@@ -99,7 +100,7 @@ class Window:
 		self.B2 = Button(self.master, text="Clear", command=self.clear)
 		self.B2.place(x=670, y=425)
 
-		self.B3 = Button(self.master, text="Ejecutar y Compilar", command=self.display)
+		self.B3 = Button(self.master, text="Ejecutar y Compilar", command=self.ExecDisplay)
 		self.B3.place(x=370, y=425)
 
 		# Cuadro de salida
@@ -218,12 +219,26 @@ class Window:
 		self.tagHighlight()
 		self.scan()
 
+	def ExecDisplay(self):
+		self.display()
+		File = open("Rutina.py", "w")
+		File.write(self.Compiler.code)
+		File.close()
+		# from src.IDE.Rutina import main as Objective
+		exec(self.Compiler.code, {'IDE': self})
+
 	def display(self):
 		self.printwindow.delete("1.0", tk.END)
-		self.printwindow.insert("1.0", "Compilando")
+		self.printwindow.insert("1.0", "Compilando...")
 		self.Compiler.Parse(self.T1.get("1.0", "end"))
 		self.printwindow.insert("2.0", "\n")
-		self.printwindow.insert("3.0", self.Compiler.status)
+		text = ''
+		if type(self.Compiler.status) == tuple:
+			for i in self.Compiler.status:
+				text += i
+		else:
+			text = self.Compiler.status
+		self.printwindow.insert("3.0", text)
 		# self.printwindow.insert("6.0", self.T1.get("1.0", "end"))
 		self.printwindow.insert("7.0", "\n")
 		print(self.T1.get("1.0", "end"))
@@ -326,6 +341,14 @@ class Window:
 				return
 		self.T1.yview('moveto', float(args[0]))
 		self.LineN.yview('moveto', float(args[0]))
+
+	def print(self, *arg):
+		text = ''
+		for i in arg:
+			text += str(i)
+		line = self.printwindow.count("1.0", END, "lines")[0]
+		print(line)
+		self.printwindow.insert(str(line) + ".0", text)
 
 
 def load_image(name):

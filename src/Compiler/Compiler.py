@@ -2,6 +2,8 @@ from libs.ply.lex import LexToken
 from libs.ply.yacc import YaccSymbol
 from src.ProjectParser.Parser import *
 from src.Compiler.testScopes import *
+
+
 # from src.Tambourine.TambourineDriver import *
 
 
@@ -249,11 +251,11 @@ class Compiler:
 		print(self.errors)
 
 		if self.errors != '':
-			self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+			self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 			return parse
 		if self.Scopes['globalScope'] == None:
 			self.errors += "Error detectando la funcion Principal"
-			self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+			self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 			return
 		self.errors += self.Scopes['globalScope'].Check()
 		for scope in self.Scopes['all']:
@@ -266,13 +268,15 @@ class Compiler:
 		if self.errors == '':
 			self.errors += 'No se han encontrado errores en el codigo'
 
-		self.status = ("Compilacion finalizada", 'Errores: ' + self.errors)
+		self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 		print(self.status)
-		self.code += 'def main():\n' \
+		self.code += 'def main(IDE):\n' \
 		             '\tglobal Tambourdine\n' \
+		             '\tglobal TambourdineIDE\n' \
+		             '\tTambourdineIDE=IDE\n' \
 		             '\tTambourdine=TambourineDriver()\n' \
 		             '\tPrincipal()\n' \
-		             'main()'
+		             'main(IDE)'
 		return parse
 
 	def GetCode(self):
@@ -379,7 +383,7 @@ class Compiler:
 			Code += ("\t" * tablevel) + self.readTree(ast[2]) + self.readTree(ast[3]) + "\n"
 
 		elif ast[0] == 'printstatement':
-			Code += ("\t" * tablevel) + 'print' + self.readTree(ast[2]) + "\n"
+			Code += ("\t" * tablevel) + 'TambourdineIDE.print' + self.readTree(ast[2]) + "\n"
 
 		elif ast[0] == 'metronomostatement':
 			Code += ("\t" * tablevel) + 'Tambourdine.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
