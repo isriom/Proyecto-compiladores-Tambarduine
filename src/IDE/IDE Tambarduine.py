@@ -247,20 +247,24 @@ class Window:
 	def clear(self):
 		self.T1.delete("1.0", "end")
 		self.LineN.clear()
+		self.printwindow.delete("1.0", "end")
 
 	def stackify(self):
 		self.stack.append(self.T1.get("1.0", "end - 1c"))
 		if self.stackcursor < 9: self.stackcursor += 1
 
+	def clearU(self):
+		self.T1.delete("1.0", "end")
+
 	def undo(self):
 		if self.stackcursor != 0:
-			self.clear()
+			self.clearU()
 			if self.stackcursor > 0: self.stackcursor -= 1
 			self.T1.insert("0.0", self.stack[self.stackcursor])
 
 	def redo(self):
 		if len(self.stack) > self.stackcursor + 1:
-			self.clear()
+			self.clearU()
 			if self.stackcursor < 9: self.stackcursor += 1
 			self.T1.insert("0.0", self.stack[self.stackcursor])
 
