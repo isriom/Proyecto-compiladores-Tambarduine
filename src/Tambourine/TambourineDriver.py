@@ -10,9 +10,9 @@ class TambourineDriver:
 			print("Opened port")
 		except IOError:
 			pass
-			# self.tambourine.close()
-			# self.tambourine.open()
-			# print("Port re-opened")
+			self.tambourine.close()
+			self.tambourine.open()
+			print("Port re-opened")
 
 	def writeMsg(self, x):
 		try:
