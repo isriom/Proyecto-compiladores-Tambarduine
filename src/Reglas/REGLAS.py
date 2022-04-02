@@ -320,8 +320,8 @@ def p_REGLA_42(p):
 	'''
 	tfstatement : SET var DOT T
 	'''
-	p.parser.Comp.Insert((p[2], 'bool'))
 	p.parser.Comp.insertCheck(('T', p[2]))
+	p.parser.Comp.Insert((p[2], 'bool'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
@@ -330,8 +330,8 @@ def p_REGLA_43(p):
 	'''
 	ffstatement : SET var DOT F
 	'''
-	p.parser.Comp.Insert((p[2], 'bool'))
 	p.parser.Comp.insertCheck(('F', p[2]))
+	p.parser.Comp.Insert((p[2], 'bool'))
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
 

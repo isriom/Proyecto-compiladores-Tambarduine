@@ -328,7 +328,7 @@ class Window:
 		print(path)
 		# with open(path,'r+') as f:
 		# f.truncate(0)
-		file = open(path, "a")  # a->append
+		file = open(path, "w")  # a->append,w->Write
 		file.write(self.T1.get("1.0", "end - 1c") + "\n")  # escribe el dato en el file
 		file.close()
 

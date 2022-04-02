@@ -34,19 +34,28 @@ class Scope:
 			return self.variables[t]
 
 	def insert(self, t):
+
 		if t[0] == 'PARAM':
 			self.insertP(t[1])
 			return
 		elif t[1] == 'bool' and (not t[0][1].value in self.variables):
 			t = (t[0], 'BOOL')
-		if type(t[1]) == str:
+
+		if type(t[1]) == str and (not t[0][1].value in self.variables):
 			self.variables[t[0][1].value] = t[1]
 		else:
-			tmpvalue = self.GetType(t[1].value[1].value)
+			try:
+				tmpvalue = self.GetType(t[1].value[1].value)
+			except:
+				tmpvalue = self.GetType(t[0][1].value)
 			if tmpvalue == None:
 				self.insertCheck(('ADJUST', t[0], t[1]))
 			elif tmpvalue != self.GetType(t[0][1].value):
 				self.insertCheck(('ADJUST', t[0], t[1]))
+			elif tmpvalue != t[1]:
+				self.comp.errors += "La variable " + str(
+					t[0][1].value) + " es de tipo " + tmpvalue + " pero se le desea asignar un " + t[
+					                    1] + " en linea " + str(t[0][1].lineno) + " indice: "+str(t[0][1].lexpos)
 			else:
 				self.variables[t[0]] = tmpvalue
 
