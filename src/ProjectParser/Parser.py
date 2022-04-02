@@ -36,7 +36,8 @@ def p_error(p):
 
 # Build the parser
 parser = yacc(debug=True)
-parser.error=''
+parser.error = ''
+
 
 # ast = parser.parse('if True {SET @xyz,5;} else {SET @xyz,5;};', debug=True)
 # print(ast)

@@ -8,7 +8,12 @@ from src.Lexxer.Lex import keywords, booleanOps, hits
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 
-class LineNumbers(tk.Text):  # Clase para que se vea numeros al margen
+class LineNumbers(tk.Text):
+	"""
+	class to show line index
+	"""
+
+	# Clase para que se vea numeros al margen
 	def __init__(self, master, text_widget, **kwargs):
 		super().__init__(master, **kwargs)
 
@@ -73,7 +78,7 @@ class Window:
 		self.T1.tag_configure("red", foreground="red", font="Verdana 12")
 
 		self.tags = ["orange", "blue", "purple", "green", "red"]
-
+		# words with especial colors
 		self.wordlist = [
 			["class", "Def", "for", "If", "Else", "elif", "import", "from", "as", "break", "while", "Set", "Exec"],
 			["int", "string", "float", "bool", "__init__", "@x"],
@@ -107,7 +112,8 @@ class Window:
 		self.printwindow = Text(self.master, width=70, height=10, background="black", fg="white")
 		self.printwindow.place(x=90, y=460)
 
-	def tagHighlight(self):  # Funcion para demarcar con color las palabras o simbolos reservados
+	def tagHighlight(self):
+		# Funcion para demarcar con color las palabras o simbolos reservados
 		start = "1.0"
 		end = "end"
 
@@ -220,14 +226,22 @@ class Window:
 		self.scan()
 
 	def ExecDisplay(self):
+		# execute as a normal display
 		self.display()
+		# save translated code
 		File = open("Rutina.py", "w")
 		File.write(self.Compiler.code)
 		File.close()
+		# executed the objective code, not the file
+		# use self as a unique parameter to display println! code function
 		# from src.IDE.Rutina import main as Objective
 		exec(self.Compiler.code, {'IDE': self})
 
 	def display(self):
+		"""
+		display the status of the compile procces
+		:return:
+		"""
 		self.printwindow.delete("1.0", tk.END)
 		self.printwindow.insert("1.0", "Compilando...")
 		self.Compiler.Parse(self.T1.get("1.0", "end"))
@@ -347,6 +361,11 @@ class Window:
 		self.LineN.yview('moveto', float(args[0]))
 
 	def print(self, *arg):
+		"""
+		function to connect the code println! function with the IDE
+		:param arg:
+		:return:
+		"""
 		text = ''
 		for i in arg:
 			text += str(i)

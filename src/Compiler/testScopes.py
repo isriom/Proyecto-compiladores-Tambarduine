@@ -18,6 +18,11 @@ class Var:
 
 
 def globals(data):
+	"""
+	function to detect global variables before execute the lexical analise
+	:param data: the input code as a string
+	:return: list with global variables names
+	"""
 	globalVars = []
 	# print(data2[0:0+2])
 	# print ('iiiii')

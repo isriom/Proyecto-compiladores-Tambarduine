@@ -3,6 +3,10 @@ import time
 
 
 class TambourineDriver:
+	"""
+	class to comunicate with the Hardware using serial comunication
+	"""
+
 	def __init__(self):
 		try:
 			self.tambourine = serial.Serial(port='COM5', baudrate=115200, timeout=.31)
@@ -15,6 +19,11 @@ class TambourineDriver:
 			print("Port re-opened")
 
 	def writeMsg(self, x):
+		"""
+		Send a Mesaage with the action to the Hardware, order are sended as a encoded string and the hardware decode an execute
+		:param x:
+		:return:
+		"""
 		try:
 			self.tambourine.write(bytes(x, 'utf-8'))
 			time.sleep(0.05)
@@ -26,6 +35,11 @@ class TambourineDriver:
 			self.tambourine.flush()
 
 	def abanico(self, Dir):
+		"""
+		Abanico order encode
+		:param Dir:
+		:return:
+		"""
 		if Dir == 'A':
 			self.writeMsg('1A')
 		elif Dir == 'B':
@@ -33,6 +47,11 @@ class TambourineDriver:
 		print("Abanico")
 
 	def vertical(self, Dir):
+		"""
+		Vertical order encode
+		:param Dir:
+		:return:
+		"""
 		if Dir == 'D':
 			self.writeMsg('2D')
 		elif Dir == 'I':
@@ -40,6 +59,11 @@ class TambourineDriver:
 		print("Vertical")
 
 	def percutor(self, Side):
+		"""
+		percutor order encode
+		:param Side:
+		:return:
+		"""
 		if Side == 'D':
 			self.writeMsg('3D')
 		if Side == 'I':
@@ -55,10 +79,19 @@ class TambourineDriver:
 		print("Percutor")
 
 	def golpe(self):
+		"""
+		golpe order encode
+		:return:
+		"""
 		self.writeMsg('4')
 		print("Golpe")
 
 	def vibrato(self, Quantity):
+		"""
+		vibrato order encode
+		:param Quantity:
+		:return:
+		"""
 		for i in range(Quantity):
 			if i % 2 == 0:
 				self.writeMsg('2D')
@@ -69,6 +102,12 @@ class TambourineDriver:
 		print("Vibrato")
 
 	def metronomo(self, State, Range):
+		"""
+		metronome order encode
+		:param State:
+		:param Range:
+		:return:
+		"""
 		if Range >= 0.5:
 			if State == 'A':
 				self.writeMsg('MA' + str(Range))

@@ -8,7 +8,12 @@ from src.Compiler.testScopes import *
 
 
 class Scope:
+	"""
+	Class that represent a Scope, works a symbol table to that scope
+	"""
+
 	def __init__(self, t, comp):
+
 		self.variables = {}
 		self.lineno = t.lineno
 		self.lexpos = t.lexpos
@@ -24,17 +29,31 @@ class Scope:
 		pass
 
 	def SetLineno(self, t):
+		"""
+		Deprecated
+		:param t:
+		:return:
+		"""
 		self.lineno = t.lineno
 		self.lexpos = t.lexpos
 
 	def GetType(self, t):
+		"""
+		Check if a variable already exist in the scope and return it type
+		:param t: variable name
+		:return: None id no exist, type if declared
+		"""
 		if not (t in self.variables):
 			return None
 		else:
 			return self.variables[t]
 
 	def insert(self, t):
-
+		"""
+		insert a new variable in the scope when declared. Diferente from Param, and redeclarations.
+		:param t: tuple from gramatic rules that contain the information of the variable
+		:return:
+		"""
 		if t[0] == 'PARAM':
 			self.insertP(t[1])
 			return
@@ -55,12 +74,16 @@ class Scope:
 			elif tmpvalue != t[1]:
 				self.comp.errors += "La variable " + str(
 					t[0][1].value) + " es de tipo " + tmpvalue + " pero se le desea asignar un " + t[
-					                    1] + " en linea " + str(t[0][1].lineno) + " indice: "+str(t[0][1].lexpos)
+					                    1] + " en linea " + str(t[0][1].lineno) + " indice: " + str(t[0][1].lexpos)
 			else:
 				self.variables[t[0]] = tmpvalue
 
 	def insertP(self, t):
-
+		"""
+		aux function to unpackage Parameters
+		:param t: tuple that contains all the parameters data
+		:return:
+		"""
 		if t[0] == 'var':
 			self.insert(((t[0], t[1]), 'PARAM'))
 		elif t[0] == 'ParameterIncomplete':
@@ -77,6 +100,11 @@ class Scope:
 			return
 
 	def insertCheck(self, checkTuple):
+		"""
+		insert a check in their respective level
+		:param checkTuple: tuple that contain all the data to do check
+		:return:
+		"""
 		if checkTuple[0] == 'CON' or checkTuple[0] == 'NUMBER':
 			self.toCheckConditions.append(checkTuple)
 		elif checkTuple[0] == 'FOR':
@@ -89,13 +117,32 @@ class Scope:
 			self.toCheck.append(checkTuple)
 
 	def RemoveCheck(self):
+		"""
+		Remove last standar check
+		:return:
+		"""
 		self.toCheck.pop()
 
 	def AddScope(self, scope):
+		"""
+		link actual scope with a new scope to use inf For check
+		:param scope: old scope
+		:return:
+		"""
 		self.previous = scope
 		pass
 
 	def Check(self):
+		"""
+		Semantic analisis implementation, execute all the checks stacked in the AST creation
+		work with level
+		first -> variables value changes
+		second -> standar checks (Types, Neg, T, F)
+		third -> conditional checks (int condition int)
+		fourth -> For checks, let define if a For variable exist or not
+		fifth -> Check Rutines existence and check paramater number coincidence
+		:return: Error founded in the semantic analisis
+		"""
 		error = ''
 		print(self.variables)
 		for i in self.toCheckAD:
@@ -201,7 +248,6 @@ class Scope:
 		for i in self.toCheckFor:
 			vartype = self.GetType(i[1].value[1].value)
 			if vartype == None:
-
 				vartype = self.comp.Scopes['globalScope'].GetType(i[1].value[1].value)
 				if vartype == None:
 					i[1].defined = i[0]
@@ -225,11 +271,15 @@ class Scope:
 
 
 class Compiler:
+	"""
+	Class that do the lexical analize, the sintax analize and transalate the input code to the objective code
+	"""
 
 	def __init__(self):
 		abstracT = LexToken
 		abstracT.lineno = 0
 		abstracT.lexpos = 0
+		# initial actualScope is the scope in charge of the Rutines. Redefined as a abstract Scope with not linno
 		self.Scopes = {'actualScope': Scope(abstracT, self), 'globalScope': None, 'all': []}
 		self.lexer = GetLexer()
 		self.parser = GetParser()
@@ -240,7 +290,14 @@ class Compiler:
 		self.errors: str = ''
 
 	def Parse(self, text):
+		"""
+		Main function to parse a code, call the lexical, sintax, semantic, translation functions
+		:param text: code as a single line code
+		:return: AST used in the transalation procces
+		"""
+		# glabal variables finded before start the parse to simplificate posterior work
 		gl = globals(text)
+		# abstraction of a lextoken to create the intial actual scope
 		abstracT = LexToken
 		abstracT.lineno = 0
 		abstracT.lexpos = 0
@@ -251,34 +308,39 @@ class Compiler:
 		self.status = ("inited",)
 		self.errors = ''
 		self.code = 'from src.Tambourine.TambourineDriver import *\n'
-
+		# parse the code, call both lexical and sintax analisis
 		parse = self.parser.parse(text, debug=True, lexer=self.lexer)
 		self.errors += self.lexer.error
 		print("self.errors")
 		print(self.errors)
 		self.errors += self.parser.error
 		print(self.errors)
-
+		# if error found in the lexical or sintax stop and save error logs
 		if self.errors != '':
 			self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 			return parse
+		# especial case for global variables scope
 		if self.Scopes['globalScope'] == None:
 			self.errors += "Error detectando la funcion Principal"
 			self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 			return
 		self.errors += self.Scopes['globalScope'].Check()
+		# init the semantic analise
 		for scope in self.Scopes['all']:
 			self.errors += scope.Check()
+		# insert the globals detected before in the global scope and in the code
 		self.Scopes['globalScope'].gl = gl
 		for i in gl:
 			self.code += 'global ' + i[1:] + '\n'
+		# translated the code to the objective Code
 		self.code += self.readTree(parse)
 		self.errors += self.lexer.error
 		if self.errors == '':
 			self.errors += 'No se han encontrado errores en el codigo'
-
+		# save actual state with error log
 		self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 		print(self.status)
+		# add execution order to objective code
 		self.code += 'def main(IDE):\n' \
 		             '\tglobal Tambourdine\n' \
 		             '\tglobal TambourdineIDE\n' \
@@ -314,6 +376,11 @@ class Compiler:
 		pass
 
 	def CreateScope(self, T):
+		"""
+		Create and insert a new scope to work as a symbol table
+		:param T: Token of pre_scope symbol to define postion of scope
+		:return: the new Scope
+		"""
 		new = Scope(T, self)
 		new.AddScope(self.Scopes['actualScope'])
 		self.Scopes['all'].append(new)
@@ -321,10 +388,20 @@ class Compiler:
 		return new
 
 	def CloseScope(self):
+		"""
+		Close the actual scope to protect local variables
+		:return:
+		"""
 		if self.Scopes['actualScope'].previous != None:
 			self.Scopes['actualScope'] = self.Scopes['actualScope'].previous
 
 	def readTree(self, ast, tablevel=0):
+		"""
+		Recursive tail function that read the AST and translate it to objective code
+		:param ast: AST create with the function Parse, or a node of the AST
+		:param tablevel: actual python tab level
+		:return: Objective Code
+		"""
 		if ast is None:
 			return
 		if type(ast) == YaccSymbol:
@@ -372,7 +449,7 @@ class Compiler:
 
 				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1)
 
-		elif ast[0] == 'incasestatement':
+		elif ast[0] == 'incasestatement':  # call a aux function to save variable name of case statements
 			if length == 5:
 				Code += ("\t" * tablevel) + self.readTree(ast[2])
 				Code += ("\t" * tablevel) + self.readTree(ast[3])
@@ -505,6 +582,13 @@ class Compiler:
 		return Code
 
 	def ENCASO(self, ast, tablevel, parametro):
+		"""
+		Aux function of readTree. Recursive save state function to unpack Encase statements without explicit variable.
+		:param ast:
+		:param tablevel:
+		:param parametro:
+		:return:
+		"""
 		if type(ast) != tuple:
 			ast = ast.value
 		length = len(ast)

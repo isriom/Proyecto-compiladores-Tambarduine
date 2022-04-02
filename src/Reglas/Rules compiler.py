@@ -89,3 +89,7 @@ print(CODE)
 output.write(CODE)
 File.close()
 output.close()
+###
+" Sí usted esta viendo esto en la defensa, no deberia," \
+" si se sobrescriben las reglas importe las reglas permanentes para sobrescribir los casos especiales"
+###
