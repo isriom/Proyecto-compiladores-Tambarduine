@@ -226,7 +226,7 @@ def test_Golpe_false():
 def test_print():
 	code = "	if True: \n\txyz=5"
 
-	example = 'Def Principal(){SET @curso, 1;println!("este es el proyecto numero",@curso,"de compiladores");}'
+	example = 'Def Principal(){SET @curso, 1;println!("este es el proyecto numero",@curso,"de compiladores. Y la variable curso es:",type(@curso));}'
 
 	assert compiler.Parse(example) != None
 	assert compiler.errors == 'No se han encontrado errores en el codigo'

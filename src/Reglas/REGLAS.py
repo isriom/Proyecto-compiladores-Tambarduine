@@ -238,8 +238,6 @@ def p_REGLA_31(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
 
 
-# Var1 ,x15
-
 def p_REGLA_32(p):
 	'''
 	defstatement : DEF PRINCIPAL LPAREN RPAREN Scope
@@ -514,7 +512,7 @@ def p_REGLA_68(p):
 	'''
 	Parameters : LPAREN RPAREN
 	'''
-	
+
 	p.slice[0].vars = 0
 	p.slice[0].number = 0
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
@@ -559,26 +557,15 @@ def p_REGLA_72(p):
 
 def p_REGLA_73(p):
 	'''
-	textincomplete : textincomplete TEXT
+	ParameterIncomplete : ParameterIncomplete COMMA typeestatement
 	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+
+	p.slice[0].vars = p.slice[1].vars
+	p.slice[0].number = p.slice[1].number + 1
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_74(p):
-	'''
-	textincomplete : QUOTES TEXT
-	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
-
-
-def p_REGLA_75(p):
-	'''
-	text : textincomplete QUOTES
-	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
-
-
-def p_REGLA_76(p):
 	'''
 	ParameterIncomplete : LPAREN numberParam
 	'''
@@ -587,7 +574,7 @@ def p_REGLA_76(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
-def p_REGLA_77(p):
+def p_REGLA_75(p):
 	'''
 	ParameterIncomplete : LPAREN var
 	'''
@@ -596,7 +583,7 @@ def p_REGLA_77(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
-def p_REGLA_78(p):
+def p_REGLA_76(p):
 	'''
 	ParameterIncomplete : LPAREN boolParam
 	'''
@@ -605,7 +592,7 @@ def p_REGLA_78(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
-def p_REGLA_79(p):
+def p_REGLA_77(p):
 	'''
 	ParameterIncomplete : LPAREN text
 	'''
@@ -614,7 +601,38 @@ def p_REGLA_79(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
+def p_REGLA_78(p):
+	'''
+	ParameterIncomplete : LPAREN typeestatement
+	'''
+	p.slice[0].vars = 0
+	p.slice[0].number = 1
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+
+
+def p_REGLA_79(p):
+	'''
+	text : textincomplete QUOTES
+	'''
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+
+
 def p_REGLA_80(p):
+	'''
+	textincomplete : textincomplete TEXT
+				   | textincomplete DOT
+	'''
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+
+
+def p_REGLA_81(p):
+	'''
+	textincomplete : QUOTES TEXT
+	'''
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+
+
+def p_REGLA_82(p):
 	'''
 	var : VAR
 	'''
@@ -629,42 +647,42 @@ def p_REGLA_80(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[0])
 
 
-def p_REGLA_81(p):
+def p_REGLA_83(p):
 	'''
 	numberParam : var
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_82(p):
+def p_REGLA_84(p):
 	'''
 	numberParam : NUMBER
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_83(p):
+def p_REGLA_85(p):
 	'''
 	boolParam : bool
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_84(p):
+def p_REGLA_86(p):
 	'''
 	boolParam : var
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_85(p):
+def p_REGLA_87(p):
 	'''
 	bool : BOOLEAN
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_86(p):
+def p_REGLA_88(p):
 	'''
 	bool : numberParam condition numberParam
 	'''
@@ -673,7 +691,7 @@ def p_REGLA_86(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_87(p):
+def p_REGLA_89(p):
 	'''
 	bool : boolParam condition boolParam
 	'''
@@ -682,56 +700,56 @@ def p_REGLA_87(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_88(p):
+def p_REGLA_90(p):
 	'''
 	condition : LESS
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_89(p):
+def p_REGLA_91(p):
 	'''
 	condition : GREAT
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_90(p):
+def p_REGLA_92(p):
 	'''
 	condition : EQUAL
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_91(p):
+def p_REGLA_93(p):
 	'''
 	condition : LESSEQUAL
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_92(p):
+def p_REGLA_94(p):
 	'''
 	condition : GREATEEQUAL
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_93(p):
+def p_REGLA_95(p):
 	'''
 	condition : DIFFERENT
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_94(p):
+def p_REGLA_96(p):
 	'''
 	condition : EQUALEQUAL
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_95(p):
+def p_REGLA_97(p):
 	'''
 	Pre_Scope :
 	'''
@@ -741,14 +759,14 @@ def p_REGLA_95(p):
 	p[0] = (p.slice[0].type)
 
 
-def p_REGLA_96(p):
+def p_REGLA_98(p):
 	'''
 	numberParam : expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
 
-def p_REGLA_97(p):
+def p_REGLA_99(p):
 	'''
 	expression : numberParam PLUS numberParam
 	'''
@@ -757,7 +775,7 @@ def p_REGLA_97(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_98(p):
+def p_REGLA_100(p):
 	'''
 	expression : numberParam MINUS numberParam
 	'''
@@ -766,7 +784,7 @@ def p_REGLA_98(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_99(p):
+def p_REGLA_101(p):
 	'''
 	expression : numberParam TIMES numberParam
 	'''
@@ -775,7 +793,7 @@ def p_REGLA_99(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_100(p):
+def p_REGLA_102(p):
 	'''
 	expression : numberParam DIVIDE numberParam
 	'''
@@ -784,7 +802,7 @@ def p_REGLA_100(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_101(p):
+def p_REGLA_103(p):
 	'''
 	expression : numberParam INTDIVIDE numberParam
 	'''
@@ -793,7 +811,7 @@ def p_REGLA_101(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_102(p):
+def p_REGLA_104(p):
 	'''
 	expression : numberParam MODULUS numberParam
 	'''
@@ -802,7 +820,7 @@ def p_REGLA_102(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_103(p):
+def p_REGLA_105(p):
 	'''
 	expression : numberParam POWER numberParam
 	'''
@@ -811,64 +829,63 @@ def p_REGLA_103(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_104(p):
-	'''
-	expression : LPAREN expression RPAREN
-	'''
-
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
-
-
-def p_REGLA_105(p):
-	'''
-	expression : expression PLUS expression
-	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
-
-
 def p_REGLA_106(p):
 	'''
-	expression : expression MINUS expression
+	expression : LPAREN expression RPAREN
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_107(p):
 	'''
-	expression : expression TIMES expression
+	expression : expression PLUS expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_108(p):
 	'''
-	expression : expression DIVIDE expression
+	expression : expression MINUS expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_109(p):
 	'''
-	expression : expression INTDIVIDE expression
+	expression : expression TIMES expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_110(p):
 	'''
-	expression : expression MODULUS expression
+	expression : expression DIVIDE expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_111(p):
 	'''
-	expression : expression POWER expression
+	expression : expression INTDIVIDE expression
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
 def p_REGLA_112(p):
+	'''
+	expression : expression MODULUS expression
+	'''
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
+
+
+def p_REGLA_113(p):
+	'''
+	expression : expression POWER expression
+	'''
+	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
+
+
+def p_REGLA_114(p):
 	'''
 	expression : expression PLUS numberParam
 	'''
@@ -877,7 +894,7 @@ def p_REGLA_112(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_113(p):
+def p_REGLA_115(p):
 	'''
 	expression : expression MINUS numberParam
 	'''
@@ -886,7 +903,7 @@ def p_REGLA_113(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_114(p):
+def p_REGLA_116(p):
 	'''
 	expression : expression TIMES numberParam
 	'''
@@ -895,7 +912,7 @@ def p_REGLA_114(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_115(p):
+def p_REGLA_117(p):
 	'''
 	expression : expression DIVIDE numberParam
 	'''
@@ -904,7 +921,7 @@ def p_REGLA_115(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_116(p):
+def p_REGLA_118(p):
 	'''
 	expression : expression INTDIVIDE numberParam
 	'''
@@ -913,7 +930,7 @@ def p_REGLA_116(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_117(p):
+def p_REGLA_119(p):
 	'''
 	expression : expression MODULUS numberParam
 	'''
@@ -922,7 +939,7 @@ def p_REGLA_117(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_118(p):
+def p_REGLA_120(p):
 	'''
 	expression : expression POWER numberParam
 	'''
@@ -931,7 +948,7 @@ def p_REGLA_118(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 
 
-def p_REGLA_119(p):
+def p_REGLA_121(p):
 	'''
 	numberParam : MINUS numberParam
 	'''
@@ -940,7 +957,7 @@ def p_REGLA_119(p):
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 
 
-def p_REGLA_120(p):
+def p_REGLA_122(p):
 	'''
 	numberParam : numberParam DOT numberParam
 	'''
