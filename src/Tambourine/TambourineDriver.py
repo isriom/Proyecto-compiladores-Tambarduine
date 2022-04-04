@@ -8,6 +8,7 @@ class TambourineDriver:
 	"""
 
 	def __init__(self):
+		self.metronomeTime = 0.3
 		try:
 			self.tambourine = serial.Serial(port='COM5', baudrate=115200, timeout=.31)
 			self.tambourine.isOpen()
@@ -33,6 +34,7 @@ class TambourineDriver:
 			time.sleep(0.05)
 			self.tambourine.open()
 			self.tambourine.flush()
+		time.sleep(self.metronomeTime)
 
 	def abanico(self, Dir):
 		"""
@@ -92,13 +94,8 @@ class TambourineDriver:
 		:param Quantity:
 		:return:
 		"""
-		for i in range(Quantity):
-			if i % 2 == 0:
-				self.writeMsg('2D')
-				time.sleep(0.1)
-			else:
-				self.writeMsg('2I')
-				time.sleep(0.1)
+		self.writeMsg('V' + str(Quantity))
+		time.sleep(0.2 * Quantity)
 		print("Vibrato")
 
 	def metronomo(self, State, Range):
