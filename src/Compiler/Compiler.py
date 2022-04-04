@@ -260,7 +260,7 @@ class Scope:
 
 			pass
 		for i in self.toCheckR:
-			rcuantity = self.comp.Scopes['Rutinas'].GetType(i[1]+str(i[2].number))
+			rcuantity = self.comp.Scopes['Rutinas'].GetType(i[1] + str(i[2].number))
 			if rcuantity == None:
 				error += 'Erorr en linea ' + str(i[2].value[2].lineno) + '. Rutina ' + i[
 					1] + ' no se encuentra declarada.'
@@ -470,7 +470,7 @@ class Compiler:
 				Code += ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1) + '\n'
 
 		elif ast[0] == 'excecstatement':
-			Code += ("\t" * tablevel) + self.readTree(ast[2]) + self.readTree(ast[3]) + "\n"
+			Code += ("\t" * tablevel) + self.readTree(ast[2])[:-1] + str(ast[3].number) + self.readTree(ast[3]) + "\n"
 
 		elif ast[0] == 'printstatement':
 			Code += ("\t" * tablevel) + 'TambourdineIDE.print' + self.readTree(ast[2]) + "\n"
