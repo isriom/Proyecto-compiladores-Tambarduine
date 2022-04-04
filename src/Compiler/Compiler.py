@@ -455,10 +455,11 @@ class Compiler:
 
 		elif ast[0] == 'incasestatement':  # call a aux function to save variable name of case statements
 			if length == 5:
-				Code += ("\t" * tablevel) + self.readTree(ast[2])
-				Code += ("\t" * tablevel) + self.readTree(ast[3])
+				Code += self.ENCASO(ast[2], tablevel)
+				Code += self.readTree(ast[3], tablevel)
 			else:
 				Code += self.ENCASO(ast[3], tablevel, self.readTree(ast[2]))
+				Code += self.readTree(ast[4], tablevel)
 
 		elif ast[0] == 'defstatement':
 			Code += ("\t" * tablevel) + 'def '
@@ -520,16 +521,16 @@ class Compiler:
 
 		elif ast[0] == 'whenestatement':
 			if length <= 3:
-				Code += ("\t" * tablevel) + self.readTree(ast[1])
-				Code += ("\t" * tablevel) + self.readTree(ast[2])
+				Code += self.readTree(ast[1], tablevel)
+				Code += self.readTree(ast[2], tablevel)
 			else:
-				Code += ("\t" * tablevel) + "if" + self.readTree(ast[2]) + self.readTree(ast[3]) + self.readTree(
+				Code += ("\t" * tablevel) + "if " + self.readTree(ast[2]) + self.readTree(ast[3]) + self.readTree(
 					ast[4]) + ":\n"
-				Code += ("\t" * tablevel) + self.readTree(ast[6], tablevel + 1)
+				Code += self.readTree(ast[6], tablevel + 1)
 
 		elif ast[0] == 'whenelseestatement':
-			Code += ("\t" * tablevel) + "Else" + ":\n"
-			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel + 1)
+			Code += ("\t" * tablevel) + "else" + ":\n"
+			Code += self.readTree(ast[2], tablevel + 1)
 
 		elif ast[0] == 'Parameters':
 			Code += self.readTree(ast[1]) + self.readTree(ast[2])
@@ -589,7 +590,7 @@ class Compiler:
 			return ast[1]
 		return Code
 
-	def ENCASO(self, ast, tablevel, parametro):
+	def ENCASO(self, ast, tablevel, parametro='', first=True):
 		"""
 		Aux function of readTree. Recursive save state function to unpack Encase statements without explicit variable.
 		:param ast:
@@ -601,14 +602,35 @@ class Compiler:
 			ast = ast.value
 		length = len(ast)
 		Code = ''
-		if length <= 3:
-			Code += ("\t" * tablevel) + self.ENCASO(ast[1], tablevel, parametro)
-			Code += ("\t" * tablevel) + self.ENCASO(ast[2], tablevel, parametro)
+
+		if parametro != '':
+			if length <= 3:
+				Code += self.ENCASO(ast[1], tablevel, parametro, first)
+				Code += self.ENCASO(ast[2], tablevel, parametro, False)
+			else:
+				if first:
+					Code += ("\t" * tablevel) + "if " + parametro + self.readTree(ast[2]) + self.readTree(
+						ast[3]) + ":\n"
+				else:
+					Code += ("\t" * tablevel) + "elif " + parametro + self.readTree(ast[2]) + self.readTree(
+						ast[3]) + ":\n"
+				Code += self.readTree(ast[5], tablevel + 1) + "\n"
+			return Code
+			pass
 		else:
-			Code += ("\t" * tablevel) + "if" + parametro + self.readTree(ast[2]) + self.readTree(ast[3]) + ":\n"
-			Code += ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1) + "\n"
-		return Code
-		pass
+			if length <= 3:
+				Code += self.ENCASO(ast[1], tablevel, parametro, first)
+				Code += self.ENCASO(ast[2], tablevel, parametro, False)
+			else:
+				if first:
+					Code += ("\t" * tablevel) + "if " + parametro + self.readTree(ast[2]) + self.readTree(
+						ast[3]) + self.readTree(ast[4]) + ":\n"
+				else:
+					Code += ("\t" * tablevel) + "elif " + parametro + self.readTree(ast[2]) + self.readTree(
+						ast[3]) + self.readTree(ast[4]) + ":\n"
+				Code += self.readTree(ast[6], tablevel + 1) + "\n"
+			return Code
+			pass
 
 
 if __name__ == '__main__':
