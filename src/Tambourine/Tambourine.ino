@@ -34,7 +34,7 @@ String inputMessage;
 
 void setup() {
   Serial.begin(115200);
-  Serial.setTimeout(3.1);
+  Serial.setTimeout(3);
   calibrarMotores();
 
   pinMode(metroLEDPin,OUTPUT);
@@ -100,7 +100,7 @@ void loop() {
       for(int i = 2; i < inputMessage.length(); ++i){
         rangeStr.concat(inputMessage[i]);
       }
-      range = rangeStr.toFloat()*1000;
+      range = rangeStr.toFloat()/2*1000;
       metroState = true;
 
     }else if(inputMessage == "MD"){
@@ -113,25 +113,26 @@ void loop() {
 }
 
 void calibrarMotores(){
-  int pos = 90;
-
+  int posInicial = 90;
   //Tambourine Movement motors
-  xAxis.write(pos);
-  yAxis.write(pos);
+  xAxis.write(posInicial);
+  yAxis.write(posInicial);
   xAxis.attach(xAxisPin);
   yAxis.attach(yAxisPin);
 
   //Percutors
-  percutorA.write(pos);
-  percutorB.write(pos);
-  percutorD.write(pos);
-  percutorI.write(pos);
-  percutorC.write(pos);
+  percutorA.write(posInicial);
+  percutorB.write(posInicial);
+  percutorD.write(posInicial);
+  percutorI.write(posInicial);
+  percutorC.write(posInicial);
   percutorA.attach(percutorAPin);
   percutorB.attach(percutorBPin);
   percutorD.attach(percutorDPin);
   percutorI.attach(percutorIPin);
   percutorC.attach(percutorCPin);
+
+  delay(1000);
 }
 
 void metronomo(long eTime,float Range){
@@ -139,7 +140,7 @@ void metronomo(long eTime,float Range){
     static long metroTime = 0;
     metroTime = metroTime + eTime;
 
-    if(metroTime >= Range/2){
+    if(metroTime >= Range){
       metroLEDState = !metroLEDState;
       digitalWrite(metroLEDPin,metroLEDState);
       metroTime = metroTime - Range;
@@ -152,17 +153,17 @@ void abanico(char Dir){
   xAxis.attach(xAxisPin);
   if(Dir == 'A'){
     xAxis.write(180);
-    delay(25);
+    delay(80);
     xAxis.write(90);
     delay(100);
   }else if (Dir == 'B'){
     xAxis.write(0);
-    delay(25);
+    delay(80);
     xAxis.write(90);
     delay(100);
   }
   xAxis.write(90);
-  delay(range);
+  delay(range-180);
   xAxis.detach();
 }
 
@@ -171,23 +172,23 @@ void vertical(char Dir){
   yAxis.attach(yAxisPin);
   if (Dir == 'D'){
     yAxis.write(180);
-    delay(100);
+    delay(80);
     yAxis.write(90);
     delay(100);
   }else if (Dir == 'I'){
     yAxis.write(0);
-    delay(100);
+    delay(80);
     yAxis.write(90);
     delay(100);
   }
   yAxis.write(90);
-  delay(range);
+  delay(range-180);
   yAxis.detach();
 } 
 
 void vibrato(int quantity){
   int oldRange = range;
-  range = 5;
+  range = 185;
   for(int i = 0; i < quantity; ++i){
     if(i%2 == 0){
       vertical('D');
@@ -199,31 +200,27 @@ void vibrato(int quantity){
 }
 
 void percusionSimple(Servo motor,uint8_t pin){
-  motor.write(90);
   motor.attach(pin);
+  motor.write(-180);
+  delay(80);
   motor.write(180);
-  delay(100);
-  motor.write(90);
-  delay(100);
-  motor.write(90);
-  delay(range);
+  delay(78);
+  /*
+  motor.write(180);
+  delay(25);*/
+  //delay(range - 150);
   motor.detach();
 }
 
 void percusionDoble(Servo motor1, uint8_t pin1, Servo motor2, uint8_t pin2){
-  motor1.write(90);
-  motor2.write(90);
   motor1.attach(pin1);
   motor2.attach(pin2);
-  motor1.write(180);
-  motor2.write(180);
-  delay(100);
   motor1.write(90);
   motor2.write(90);
   delay(100);
-  motor1.write(90);
-  motor2.write(90);
-  delay(range);
+  motor1.write(-90);
+  motor2.write(-90);
+  delay(range - 100);
   motor1.detach();
   motor2.detach();
 }

@@ -235,6 +235,7 @@ class Window:
 		# executed the objective code, not the file
 		# use self as a unique parameter to display println! code function
 		# from src.IDE.Rutina import main as Objective
+
 		exec(self.Compiler.code, {'IDE': self})
 
 	def display(self):

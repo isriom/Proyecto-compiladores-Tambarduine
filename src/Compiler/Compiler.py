@@ -313,7 +313,7 @@ class Compiler:
 		self.errors = ''
 		self.code = 'from src.Tambourine.TambourineDriver import *\n'
 		# parse the code, call both lexical and sintax analisis
-		parse = self.parser.parse(text, debug=True, lexer=self.lexer)
+		parse = self.parser.parse(text, lexer=self.lexer)
 		self.errors += self.lexer.error
 		print("self.errors")
 		print(self.errors)
@@ -345,13 +345,17 @@ class Compiler:
 		self.status = ("Compilacion finalizada\n", 'Errores: ' + self.errors)
 		print(self.status)
 		# add execution order to objective code
+
 		self.code += 'def main(IDE):\n' \
 		             '\tglobal Tambourdine\n' \
 		             '\tglobal TambourdineIDE\n' \
 		             '\tTambourdineIDE=IDE\n' \
 		             '\tTambourdine=TambourineDriver()\n' \
-		             '\tPrincipal()\n' \
-		             'main(IDE)'
+		             '\twhile True:\n' \
+		             '\t\tPrincipal()\n' \
+					 '\t\tTambourdine.tambourine.close()\n'\
+					 '\t\tbreak\n' \
+					 'main(IDE)'
 		return parse
 
 	def GetCode(self):

@@ -9,15 +9,11 @@ class TambourineDriver:
 
 	def __init__(self):
 		self.metronomeTime = 0.3
-		try:
-			self.tambourine = serial.Serial(port='COM5', baudrate=115200, timeout=.31)
-			self.tambourine.isOpen()
-			print("Opened port")
-		except IOError:
-			pass
-			self.tambourine.close()
-			self.tambourine.open()
-			print("Port re-opened")
+		self.tambourine = serial.Serial(port='COM4', baudrate=115200, timeout=.3)
+		self.tambourine.isOpen()
+
+		print("Opened port")
+
 
 	def writeMsg(self, x):
 		"""
@@ -99,6 +95,7 @@ class TambourineDriver:
 		print("Vibrato")
 
 	def metronomo(self, State, Range):
+		self.metronomeTime = Range
 		"""
 		metronome order encode
 		:param State:
@@ -112,3 +109,8 @@ class TambourineDriver:
 			elif State == 'D':
 				self.writeMsg('MD')
 				print("Metronomo Desactivado")
+
+def main():
+	tambor = TambourineDriver()
+	tambor.vibrato(6)
+main()
