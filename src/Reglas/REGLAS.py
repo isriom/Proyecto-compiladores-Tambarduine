@@ -161,7 +161,7 @@ def p_REGLA_22(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
 	tmp = p.slice[3].scope.variables
-	p.slice[3].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[3].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[3].scope.variables:
 			if tmp[i] == p.slice[3].scope.variables[i]:
@@ -180,7 +180,7 @@ def p_REGLA_23(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 	tmp = p.slice[2].scope.variables
-	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[2].scope.variables:
 			if tmp[i] == p.slice[2].scope.variables[i]:
@@ -202,7 +202,7 @@ def p_REGLA_24(p):
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
 	tmp = p.slice[7].scope.variables
-	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[7].scope.variables:
 			if tmp[i] == p.slice[7].scope.variables[i]:
@@ -224,7 +224,7 @@ def p_REGLA_25(p):
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
 	tmp = p.slice[7].scope.variables
-	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[7].scope.variables:
 			if tmp[i] == p.slice[7].scope.variables[i]:
@@ -246,7 +246,7 @@ def p_REGLA_26(p):
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 	tmp = p.slice[5].scope.variables
-	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[5].scope.variables:
 			if tmp[i] == p.slice[5].scope.variables[i]:
@@ -268,7 +268,7 @@ def p_REGLA_27(p):
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 	tmp = p.slice[5].scope.variables
-	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[5].scope.variables:
 			if tmp[i] == p.slice[5].scope.variables[i]:
@@ -538,7 +538,7 @@ def p_REGLA_59(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6])
 	tmp = p.slice[6].scope.variables
-	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[6].scope.variables:
 			if tmp[i] == p.slice[6].scope.variables[i]:
@@ -557,7 +557,7 @@ def p_REGLA_60(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6])
 	tmp = p.slice[6].scope.variables
-	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[6].scope.variables:
 			if tmp[i] == p.slice[6].scope.variables[i]:
@@ -583,7 +583,7 @@ def p_REGLA_62(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
 	tmp = p.slice[2].scope.variables
-	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[2].scope.variables:
 			if tmp[i] == p.slice[2].scope.variables[i]:
@@ -602,7 +602,7 @@ def p_REGLA_63(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 	tmp = p.slice[5].scope.variables
-	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[5].scope.variables:
 			if tmp[i] == p.slice[5].scope.variables[i]:
@@ -628,7 +628,7 @@ def p_REGLA_65(p):
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
 	tmp = p.slice[5].scope.variables
-	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables.copy()
 	for i in tmp:
 		if i in p.slice[5].scope.variables:
 			if tmp[i] == p.slice[5].scope.variables[i]:
