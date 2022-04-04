@@ -1,3 +1,6 @@
+from libs.ply.lex import LexToken
+
+
 def p_REGLA_0(p):
 	'''
 	Code : instruction
@@ -14,16 +17,16 @@ def p_REGLA_1(p):
 
 def p_REGLA_2(p):
 	'''
-	instruction : ifelsestatement ENDLINE
+	instruction : ifelsestatement
 	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+	p[0] = (p.slice[0].type, p.slice[1])
 
 
 def p_REGLA_3(p):
 	'''
-	instruction : ifstatement ENDLINE
+	instruction : ifstatement
 	'''
-	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+	p[0] = (p.slice[0].type, p.slice[1])
 
 
 def p_REGLA_4(p):
@@ -157,6 +160,18 @@ def p_REGLA_22(p):
 	ifstatement : IF boolParam Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3])
+	tmp = p.slice[3].scope.variables
+	p.slice[3].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[3].scope.variables:
+			if tmp[i] == p.slice[3].scope.variables[i]:
+				continue
+			else:
+				p.slice[3].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[3].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[3].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_23(p):
@@ -164,6 +179,18 @@ def p_REGLA_23(p):
 	elsestatement : ELSE Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+	tmp = p.slice[2].scope.variables
+	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[2].scope.variables:
+			if tmp[i] == p.slice[2].scope.variables[i]:
+				continue
+			else:
+				p.slice[2].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[2].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[2].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_24(p):
@@ -174,6 +201,18 @@ def p_REGLA_24(p):
 	p.slice[7].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
+	tmp = p.slice[7].scope.variables
+	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[7].scope.variables:
+			if tmp[i] == p.slice[7].scope.variables[i]:
+				continue
+			else:
+				p.slice[7].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[7].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[7].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_25(p):
@@ -184,6 +223,18 @@ def p_REGLA_25(p):
 	p.slice[7].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6], p.slice[7])
+	tmp = p.slice[7].scope.variables
+	p.slice[7].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[7].scope.variables:
+			if tmp[i] == p.slice[7].scope.variables[i]:
+				continue
+			else:
+				p.slice[7].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[7].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[7].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_26(p):
@@ -194,6 +245,18 @@ def p_REGLA_26(p):
 	p.slice[5].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
+	tmp = p.slice[5].scope.variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[5].scope.variables:
+			if tmp[i] == p.slice[5].scope.variables[i]:
+				continue
+			else:
+				p.slice[5].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[5].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[5].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_27(p):
@@ -204,6 +267,18 @@ def p_REGLA_27(p):
 	p.slice[5].scope.insert((p[2], 'NUMBER'))
 
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
+	tmp = p.slice[5].scope.variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[5].scope.variables:
+			if tmp[i] == p.slice[5].scope.variables[i]:
+				continue
+			else:
+				p.slice[5].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[5].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[5].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_28(p):
@@ -233,9 +308,23 @@ def p_REGLA_31(p):
 	'''
 	for i in range(1, p.slice[3].vars):
 		p.parser.Comp.RemoveCheck()
-	p.slice[4].scope.insert(('PARAM', p[3]))
-	p.parser.Comp.Insert((('def', p.slice[2]), str(p.slice[3].number)))
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4])
+	p.parser.Comp.Insert((('def', p.slice[2]), str(p.slice[3].number)))
+	Scopes = []
+	All = [p.slice[4]]
+
+	for i in All:
+		if type(i) == str or type(i) == LexToken or type(i) == int:
+			continue
+		if i.type == 'Scope':
+			Scopes.append(i)
+			All += list(i.value[3].value)
+		elif i.type == 'var':
+			continue
+		else:
+			All += list(i.value)
+	for a in Scopes:
+		a.scope.insert(('PARAM', p[3]))
 
 
 def p_REGLA_32(p):
@@ -448,6 +537,18 @@ def p_REGLA_59(p):
 	whenestatement : CUANDO var condition boolParam ENTONS Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6])
+	tmp = p.slice[6].scope.variables
+	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[6].scope.variables:
+			if tmp[i] == p.slice[6].scope.variables[i]:
+				continue
+			else:
+				p.slice[6].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[6].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[6].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_60(p):
@@ -455,6 +556,18 @@ def p_REGLA_60(p):
 	whenestatement : CUANDO var condition numberParam ENTONS Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5], p.slice[6])
+	tmp = p.slice[6].scope.variables
+	p.slice[6].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[6].scope.variables:
+			if tmp[i] == p.slice[6].scope.variables[i]:
+				continue
+			else:
+				p.slice[6].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[6].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[6].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_61(p):
@@ -469,6 +582,18 @@ def p_REGLA_62(p):
 	whenelseestatement : SINO Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2])
+	tmp = p.slice[2].scope.variables
+	p.slice[2].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[2].scope.variables:
+			if tmp[i] == p.slice[2].scope.variables[i]:
+				continue
+			else:
+				p.slice[2].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[2].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[2].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_63(p):
@@ -476,6 +601,18 @@ def p_REGLA_63(p):
 	whenEstatementIncompletebool : CUANDO condition boolParam ENTONS Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
+	tmp = p.slice[5].scope.variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[5].scope.variables:
+			if tmp[i] == p.slice[5].scope.variables[i]:
+				continue
+			else:
+				p.slice[5].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[5].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[5].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_64(p):
@@ -490,6 +627,18 @@ def p_REGLA_65(p):
 	whenEstatementIncompletenum : CUANDO condition numberParam ENTONS Scope
 	'''
 	p[0] = (p.slice[0].type, p.slice[1], p.slice[2], p.slice[3], p.slice[4], p.slice[5])
+	tmp = p.slice[5].scope.variables
+	p.slice[5].scope.variables = p.parser.Comp.Scopes['actualScope'].variables
+	for i in tmp:
+		if i in p.slice[5].scope.variables:
+			if tmp[i] == p.slice[5].scope.variables[i]:
+				continue
+			else:
+				p.slice[5].scope.errors += "La variable " + str(
+					i) + " es de tipo " + p.slice[5].scope.variables[i] + " pero se le desea asignar un " + tmp[
+					                           i] + " en linea " + str(p.lineno) + " indice: " + str(p.lexpos)
+		else:
+			p.slice[5].scope.variables[i] = tmp[i]
 
 
 def p_REGLA_66(p):
@@ -657,6 +806,7 @@ def p_REGLA_83(p):
 def p_REGLA_84(p):
 	'''
 	numberParam : NUMBER
+			   | LPAREN numberParam RPAREN
 	'''
 	p[0] = (p.slice[0].type, p.slice[1])
 
@@ -678,8 +828,13 @@ def p_REGLA_86(p):
 def p_REGLA_87(p):
 	'''
 	bool : BOOLEAN
+		  | LPAREN bool RPAREN
 	'''
-	p[0] = (p.slice[0].type, p.slice[1])
+	if len(p.slice) > 2:
+		p[0] = (p.slice[0].type, p.slice[2])
+
+	else:
+		p[0] = (p.slice[0].type, p.slice[1])
 
 
 def p_REGLA_88(p):

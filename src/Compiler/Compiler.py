@@ -50,10 +50,12 @@ class Scope:
 
 	def insert(self, t):
 		"""
-		insert a new variable in the scope when declared. Diferente from Param, and redeclarations.
+		insert a new variable in the scope when declared. Deference between Param, and redeclarations.
 		:param t: tuple from gramatic rules that contain the information of the variable
 		:return:
 		"""
+		if t[0][0] == 'def':
+			t[0][1].value += t[1]
 		if t[0] == 'PARAM':
 			self.insertP(t[1])
 			return
@@ -84,7 +86,7 @@ class Scope:
 		:param t: tuple that contains all the parameters data
 		:return:
 		"""
-		if t[0] == 'var':
+		if t[0] == 'var' and (not t[1].value in self.variables):
 			self.insert(((t[0], t[1]), 'PARAM'))
 		elif t[0] == 'ParameterIncomplete':
 			for i in t:
@@ -158,6 +160,8 @@ class Scope:
 						self.variables[a] = self.GetType(b)
 					self.toCheckAD.remove(i)
 				else:
+					if self.GetType(a) == 'PARAM' or self.GetType(b) == 'PARAM':
+						continue
 					if self.GetType(a) == self.GetType(b):
 						self.toCheckAD.remove(i)
 					else:
@@ -256,7 +260,7 @@ class Scope:
 
 			pass
 		for i in self.toCheckR:
-			rcuantity = self.comp.Scopes['Rutinas'].GetType(i[1])
+			rcuantity = self.comp.Scopes['Rutinas'].GetType(i[1]+str(i[2].number))
 			if rcuantity == None:
 				error += 'Erorr en linea ' + str(i[2].value[2].lineno) + '. Rutina ' + i[
 					1] + ' no se encuentra declarada.'
@@ -420,16 +424,16 @@ class Compiler:
 				Code += self.readTree(ast[instruction], tablevel)
 
 		elif ast[0] == 'ifelsestatement':
-			Code += ("\t" * tablevel) + self.readTree(ast[1], tablevel) + '\n'
-			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel)
+			Code += self.readTree(ast[1], tablevel) + '\n'
+			Code += self.readTree(ast[2], tablevel)
 
 		elif ast[0] == 'elsestatement':
-			Code += ("\t" * tablevel) + "Else" + ":\n"
-			Code += ("\t" * tablevel) + self.readTree(ast[2], tablevel + 1)
+			Code += ("\t" * tablevel) + "else" + ":\n"
+			Code += self.readTree(ast[2], tablevel + 1)
 
 		elif ast[0] == 'ifstatement':
 			Code += ("\t" * tablevel) + "if " + self.readTree(ast[2]) + ":\n"
-			Code += ("\t" * tablevel) + self.readTree(ast[3], tablevel + 1)
+			Code += self.readTree(ast[3], tablevel + 1)
 
 		elif ast[0] == 'forstatement':  # need a refactor
 			if len(ast) >= 7:
@@ -444,10 +448,10 @@ class Compiler:
 					ast[2]) + ',' + self.readTree(ast[4])
 			if length > 6:
 				Code += ',' + self.readTree(ast[6])
-				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[7], tablevel + 1)
+				Code += '):\n' + self.readTree(ast[7], tablevel + 1)
 			else:
 
-				Code += '):\n' + ("\t" * tablevel) + self.readTree(ast[5], tablevel + 1)
+				Code += '):\n' + self.readTree(ast[5], tablevel + 1)
 
 		elif ast[0] == 'incasestatement':  # call a aux function to save variable name of case statements
 			if length == 5:
@@ -472,7 +476,7 @@ class Compiler:
 			Code += ("\t" * tablevel) + 'TambourdineIDE.print' + self.readTree(ast[2]) + "\n"
 
 		elif ast[0] == 'metronomostatement':
-			Code += ("\t" * tablevel) + 'Tambourdine.Metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
+			Code += ("\t" * tablevel) + 'Tambourdine.metronomo(' + self.readTree(ast[3]) + ',' + self.readTree(
 				ast[5]) + ")\n"
 
 		elif ast[0] == 'declarationstatement':
@@ -500,7 +504,7 @@ class Compiler:
 			Code += ("\t" * tablevel) + "Tambourdine.golpe()\n"
 
 		elif ast[0] == 'vribatoestatement':
-			Code += ("\t" * tablevel) + 'Tambourdine.percutor(' + self.readTree(ast[3]) + ")\n"
+			Code += ("\t" * tablevel) + 'Tambourdine.vibrato(' + self.readTree(ast[3]) + ")\n"
 
 		elif ast[0] == 'typeestatement':
 
@@ -554,7 +558,10 @@ class Compiler:
 				Code += self.readTree(ast[1])
 
 		elif ast[0] == 'boolParam':
-			Code += self.readTree(ast[1])
+			if length == 4:
+				Code += self.readTree(ast[1]) + self.readTree(ast[2]) + self.readTree(ast[3])
+			else:
+				Code += self.readTree(ast[1])
 
 		elif ast[0] == 'condition':
 			Code += self.readTree(ast[1])
@@ -576,7 +583,8 @@ class Compiler:
 
 		elif ast[0] == 'NUMBER':
 			Code += str(ast[1])
-
+		elif ast[0] in letters:
+			Code += "'" + ast[1] + "'"
 		else:
 			return ast[1]
 		return Code
@@ -613,29 +621,35 @@ if __name__ == '__main__':
 	comp = Compiler()
 	ast = comp.Parse(
 
-		'''
-		Def @MiRutina2 (@abc)
-		{ Set @xy1, 4;
-		 Set @xy2, 4;
-		 }
-		Def @MiRutina (@dato1,@x15)
-		 { println! ("Desde la rutina  ", @dato1 );
-		 Exec @MiRutina2(1);
-		 Set @Var1, @xy1;
-		 Golpe();
-		for @Var1 to 10 Step 2
-		{ println! ("Valor ", @Var1 ); }
-		 }
-		Def Principal ()
-		{
-		Set @Variable1, 5; # Variables globales
-		Set @xy1, 2;
-		Set @yx3, True;
-		Set @variable, True;
-		Set @variable.NEG;
-		Exec @MiRutina(2,3);
-		Exec @MiRutina(@Variable1,4);
-		}''')
+		'''Def @MiRutina2 (@abc){ 
+				Set @xy1, 4;
+				Set @xy2, 4;
+			}
+			Def @hitxX (@xhits){
+				Set @Var1, @xhits;
+				for @Var1 to 10 Step 2{
+				Golpe();
+				println! ("golpe_numero: ", @Var1 ); 
+				}
+			}
+			
+			Def @FiboHit(@max,@actual){
+				Set @Run, True;
+				If (@actual > @max){
+				Set @Run,False;
+				println!("FIN");
+				}
+				Else{
+				Exec @FiboHit(@max,@actual+1);
+				}
+			}
+			
+			Def Principal (){
+				Set @Variable1, 5; # Variables globales
+				Set @xy1, 5;
+				Metronomo('A',0.4);
+				Exec @hitxX(@xy1);
+			}''')
 	print(comp.errors)
 	File = open("Rutina.py", "w")
 	File.write(comp.code)

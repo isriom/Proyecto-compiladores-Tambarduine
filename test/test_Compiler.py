@@ -271,7 +271,7 @@ def test_for_var_step():
 def test_if():
 	code = "	if True: \n\txyz=5"
 
-	example = "Def Principal(){if True {SET @xyz,5;};}"
+	example = "Def Principal(){if True {SET @xyz,5;}}"
 
 	assert compiler.Parse(example) != None
 	assert compiler.errors == 'No se han encontrado errores en el codigo'
@@ -279,7 +279,7 @@ def test_if():
 
 ##Falta procesar == en el parser##
 def test_if_else():
-	example = "	Def Principal(){SET @xym,5;if @xym*2==6 {SET @xyz,5;} else{SET @xyz,5;};}"
+	example = "	Def Principal(){SET @xym,5;if @xym*2==6 {SET @xyz,5;} else{SET @xyz,5;}}"
 	assert compiler.Parse(example) is not None
 	assert compiler.errors == 'No se han encontrado errores en el codigo'
 
@@ -287,7 +287,7 @@ def test_if_else():
 def test_if_false():
 	code = "	if True: \n\txyz=5"
 
-	example = "Def Principal(){if True {SET @xyz,5;}}"
+	example = "Def Principal(){if True {SET @xyz,5;};}"
 
 	assert compiler.Parse(example) == None
 	assert compiler.errors != 'No se han encontrado errores en el codigo'
