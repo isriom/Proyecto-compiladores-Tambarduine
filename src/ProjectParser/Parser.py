@@ -28,10 +28,12 @@ def p_error(p):
 	if p == None:
 		print("end of file reached, Parsed finished or most probabily Syntax error at the end of file")
 	else:
-		parser.error += '\n'
-		parser.error += f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}'
-		print(f'Syntax error at {p.value!r} in line {p.lineno} index {p.lexpos}')
-		print(parser.error)
+		previous_token = parser.symstack[-1]
+		if type(previous_token) == type(p):
+				print("\nSyntax error in  " + str(previous_token) + "in line " + str(parser.symstack[-1].lineno))
+		else:
+				print("\nSyntax error in  " + str(p) + "in line " + str(p.lineno))
+
 
 
 # Build the parser
